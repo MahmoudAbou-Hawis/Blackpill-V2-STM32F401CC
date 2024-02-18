@@ -1,22 +1,23 @@
 /******************************************************************************/
 /**
- * @file FILE.c
- * @brief 
+ * @file switch.c
+ * @brief Source file for switch control in the system.
  *
  * @par Project Name
- * 
+ * Embedded Switch Control System
  *
  * @par Code Language
  * C
  *
  * @par Description
- * 
- * 
+ * This source file contains the implementations of functions for controlling switches
+ * in the embedded system.
+ *
  * @par Author
  * Mahmoud Abou-Hawis
  *
- */
-/******************************************************************************/
+ ******************************************************************************/
+
 
 /******************************************************************************/
 /* INCLUDES */

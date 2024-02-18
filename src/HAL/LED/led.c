@@ -4,7 +4,7 @@
  * @brief Implementation file for LED Module
  *
  * @par Project Name
- * Name of the project or application utilizing the LED module.
+ * LED Control System
  *
  * @par Code Language
  * C

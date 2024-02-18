@@ -1,21 +1,39 @@
 /*******************************************************************************/
 /**
- * @file FILE.h
- * @brief 
+ * @file switch.h
+ * @brief Header file for switch control in the system.
  *
  * @par Project Name
- * 
+ * Embedded Switch Control System
  *
  * @par Code Language
  * C
  *
  * @par Description
- * 
+ * This header file provides functions and definitions for controlling switches
+ * in the embedded system. It defines an enumeration for different switches,
+ * along with functions to initialize and read the state of switches.
  *
+ * @par Configuration
+ * Before including this header file in your source code, ensure that you have
+ * properly configured all switches in the switches_cfg.h header file. Each switch
+ * should be assigned a unique identifier and its corresponding GPIO pin.
+ *
+ * @par How to Use
+ * 1. Include this header file in your source code:
+ *    #include "switch.h"
+ * 
+ * 2. Initialize the switch subsystem using `SWITCH_Init()` function.
+ * 
+ * 3. Use the provided functions to read the state of switches:
+ *    - To read the state of a switch, use `SWITCH_enuGetStatus(switch,status)`.
+ * 
  * @par Author
  * Mahmoud Abou-Hawis
  *
- ******************************************************************************/
+ ******************************************************************************/ 
+
+
 
 /******************************************************************************/
 /* MULTIPLE INCLUSION GUARD */

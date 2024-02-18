@@ -58,6 +58,17 @@ extern "C"
 /* PUBLIC ENUMS */
 /******************************************************************************/
 
+/** 
+ * Enumeration defining different switches.
+ * 
+ *@brief This enumeration is used to represent different switches in the system.
+ * 
+ * - _SWITCHES_NUM: Represents the total number of switches in the system.
+ * 
+ * @note : _SWITCHES_NUM is used to represent the total number of switches and 
+ * must remain unchanged. It should always be the last element in the enum 
+ * and should not be accessed directly outside this module.
+ */
 typedef enum
 {
     ALARM_SWITCH,

@@ -59,6 +59,17 @@ extern "C"
 /* PUBLIC ENUMS */
 /******************************************************************************/
 
+/*
+ * Enumeration defining different LEDs.
+ * 
+ * This enumeration is used to represent different LEDs in the system.
+ * 
+ * - _LEDs_NUM: Represents the total number of LEDs in the system.
+ * 
+ * Note: The symbol '_' prefix conventionally indicates a private or internal
+ * symbol. In this case, _LEDs_NUM is used internally to represent the total
+ * number of LEDs and should not be accessed directly outside this module.
+ */
 typedef enum
 {
    ALARM_LED ,

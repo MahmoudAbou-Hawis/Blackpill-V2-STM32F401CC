@@ -4,7 +4,7 @@
  * @brief Header file for LED Module
  *
  * @par Project Name
- *  Led Module.
+ *  LED Control System
  *
  * @par Code Language
  * C
@@ -13,6 +13,11 @@
  * This header file defines the interface for the LED module. It contains declarations
  * for functions and data types related to controlling LEDs, such as initialization
  * and setting LED states.
+ *
+ * @par Configuration
+ * Before including this header file in your source code, ensure that you have
+ * properly configured all LEDs in the LED_cfg.h header file. Each LED
+ * should be assigned a unique identifier and its corresponding GPIO pin.
  *
  * @par Usage
  * To use the LED module in your project:
@@ -25,6 +30,7 @@
  * Mahmoud Abou-Hawis
  *
  ******************************************************************************/ 
+
 
 /******************************************************************************/
 /* MULTIPLE INCLUSION GUARD */
