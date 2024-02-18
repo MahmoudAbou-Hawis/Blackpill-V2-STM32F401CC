@@ -364,7 +364,7 @@ typedef enum
     NOT_VALID_SPEED,
     NOT_VALID_STATUS,
     SUCCESS
-} errorStatus;
+} GPIO_enuErrorStatus;
 
 
 
@@ -415,9 +415,16 @@ typedef struct
  * in the gpioPin_t structure.
  * 
  * @param gpio Pointer to a gpioPin_t structure containing the GPIO pin configuration.
- * @return An errorStatus code indicating the success or failure of the initialization.
+ * 
+  @return: Indicates the success or failure of the initialization process.
+ *   - `SUCCESS`: The pin was initialized successfully.
+ *   - `NOT_VALID_PORT`: The provided GPIO port instance is invalid.
+ *   - `NOT_VALID_MODE`: The provided GPIO mode is invalid.
+ *   - `NOT_VALID_SPEED`: The provided GPIO speed is invalid.
+ *   - `NOT_VALID_PIN`: The provided GPIO pin number is invalid.
+ *
  */
-errorStatus GPIO_Init(gpioPin_t * gpioPin);
+GPIO_enuErrorStatus GPIO_Init(gpioPin_t * gpioPin);
 
 /**
  * @brief Set the value of a GPIO pin
@@ -426,11 +433,16 @@ errorStatus GPIO_Init(gpioPin_t * gpioPin);
  * @param GPIO_Port Pointer to the base address of the GPIO port.
  * @param GPIO_Pin The number of the GPIO pin.
  * @param GPIO_State The state (high or low) to set the GPIO pin to.
- * @return An errorStatus code indicating the success or failure of the operation.
+ * 
+ *@return: Indicates the success or failure of the operation.
+ *   - `SUCCESS`: The pin value was set successfully.
+ *   - `NOT_VALID_PORT`: The provided GPIO_Port pointer is invalid.
+ *   - `NOT_VALID_PIN`: The provided GPIO_Pin number is invalid.
+ *   - `NOT_VALID_STATUS`: The provided GPIO_State value is invalid.
  * 
  * @note you should init the pin first.
  */
-errorStatus GPIO_SetPinValue(void * GPIO_Port, uint8_t GPIO_Pin, uint32_t GPIO_State);
+GPIO_enuErrorStatus GPIO_SetPinValue(void * GPIO_Port, uint8_t GPIO_Pin, uint32_t GPIO_State);
 
 /**
  * @brief Get the value of a GPIO pin
@@ -439,11 +451,16 @@ errorStatus GPIO_SetPinValue(void * GPIO_Port, uint8_t GPIO_Pin, uint32_t GPIO_S
  * @param GPIO_Port Pointer to the base address of the GPIO port.
  * @param GPIO_Pin The number of the GPIO pin.
  * @param value Pointer to a variable where the current state of the GPIO pin will be stored.
- * @return An errorStatus code indicating the success or failure of the operation.
+ * 
+ * @return: Indicates the success or failure of the operation.
+ *   - `SUCCESS`: The pin value was retrieved successfully.
+ *   - `NOT_VALID_PORT`: The provided GPIO_Port pointer is invalid.
+ *   - `NOT_VALID_PIN`: The provided GPIO_Pin number is invalid.
+ *   - `NULL_PTR_PASSED`: The provided `value` pointer is NULL.
  * 
  * @note you should init the pin first.
  */
-errorStatus GPIO_GetPinValue(void * GPIO_Port, uint8_t GPIO_Pin, uint32_t * value);
+GPIO_enuErrorStatus GPIO_GetPinValue(void * GPIO_Port, uint8_t GPIO_Pin, uint32_t * value);
 
 
 /******************************************************************************/

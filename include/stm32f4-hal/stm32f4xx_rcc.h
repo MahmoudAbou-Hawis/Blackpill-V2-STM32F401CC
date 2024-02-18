@@ -64,9 +64,9 @@ extern "C"
  * @brief All prescalers for AHB Bus.
  */
 #define 	BUS_AHB_PRE_DIV1 	  		((uint32_t)0x00000070)
-#define 	BUS_AHB_PRE__DIV2   		((uint32_t)0x00000080)
-#define 	BUS_AHB_PRE__DIV4   		((uint32_t)0x00000090)
-#define 	BUS_AHB_PRE__DIV8   		((uint32_t)0x000000A0)
+#define 	BUS_AHB_PRE_DIV2   			((uint32_t)0x00000080)
+#define 	BUS_AHB_PRE_DIV4   			((uint32_t)0x00000090)
+#define 	BUS_AHB_PRE_DIV8   			((uint32_t)0x000000A0)
 #define 	BUS_AHB_PRE_DIV16  			((uint32_t)0x000000B0)
 #define 	BUS_AHB_PRE_DIV64  			((uint32_t)0x000000C0)
 #define 	BUS_AHB_PRE_DIV128 			((uint32_t)0x000000D0)

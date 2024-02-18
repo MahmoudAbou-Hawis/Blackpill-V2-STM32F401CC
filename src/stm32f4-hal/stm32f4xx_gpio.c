@@ -189,9 +189,9 @@ typedef struct {
 /* PUBLIC FUNCTION DEFINITIONS */
 /******************************************************************************/
 
-errorStatus GPIO_Init(gpioPin_t * gpioPin)
+GPIO_enuErrorStatus GPIO_Init(gpioPin_t * gpioPin)
 {
-    errorStatus RET_enuErrorStatus = SUCCESS;
+    GPIO_enuErrorStatus RET_enuErrorStatus = SUCCESS;
     
     /* Check the given pin configuration */
     if(!IS_GPIO_INSTANCE(gpioPin->GPIO_Port))
@@ -274,49 +274,56 @@ errorStatus GPIO_Init(gpioPin_t * gpioPin)
     return RET_enuErrorStatus;
 }
 
-
-errorStatus GPIO_SetPinValue(void * GPIO_Port, uint8_t GPIO_Pin, uint32_t GPIO_State)
+GPIO_enuErrorStatus GPIO_SetPinValue(void *GPIO_Port, uint8_t GPIO_Pin, uint32_t GPIO_State)
 {
-    errorStatus RET_enuErrorStatus = SUCCESS;
-    if(!IS_GPIO_INSTANCE(GPIO_Port))
+    /* Initialize return status to success */
+    GPIO_enuErrorStatus RET_enuErrorStatus = SUCCESS;
+
+    /* Validate input arguments */
+    if (!IS_GPIO_INSTANCE(GPIO_Port))
     {
         RET_enuErrorStatus = NOT_VALID_PORT;
     }
-    else if(!IS_GPIO_PIN(GPIO_Pin))
+    else if (!IS_GPIO_PIN(GPIO_Pin))
     {
         RET_enuErrorStatus = NOT_VALID_PIN;
     }
-    else if(!IS_GPIO_STATE(GPIO_State))
+    else if (!IS_GPIO_STATE(GPIO_State))
     {
         RET_enuErrorStatus = NOT_VALID_STATUS;
     }
-    else 
+    else
     {
-        ((GPIO* const)(GPIO_Port))->BSRR |= (1 << (GPIO_Pin + (GPIO_State * 16)));
+        /* Set pin value using BSRR register */
+        ((GPIO *const)(GPIO_Port))->BSRR |= (1 << (GPIO_Pin + (GPIO_State * 16)));
     }
+
     return RET_enuErrorStatus;
 }
 
-
-errorStatus GPIO_GetPinValue(void * GPIO_Port, uint8_t GPIO_Pin, uint32_t * value)
+GPIO_enuErrorStatus GPIO_GetPinValue(void *GPIO_Port, uint8_t GPIO_Pin, uint32_t *value)
 {
-    errorStatus RET_enuErrorStatus = SUCCESS;
-    if(!IS_GPIO_INSTANCE(GPIO_Port))
+    GPIO_enuErrorStatus RET_enuErrorStatus = SUCCESS;
+
+    /* Validate input arguments */
+    if (!IS_GPIO_INSTANCE(GPIO_Port))
     {
         RET_enuErrorStatus = NOT_VALID_PORT;
     }
-    else if(!IS_GPIO_PIN(GPIO_Pin))
+    else if (!IS_GPIO_PIN(GPIO_Pin))
     {
         RET_enuErrorStatus = NOT_VALID_PIN;
     }
-    else if(value == NULL)
+    else if (value == NULL)
     {
         RET_enuErrorStatus = NULL_PTR_PASSED;
     }
-    else 
+    else
     {
-       *value = ((((GPIO*)GPIO_Port)->IDR) >> GPIO_Pin) & 1U;
+        /* Retrieve pin value from the input data register */
+        *value = (((((GPIO *)GPIO_Port)->IDR) >> GPIO_Pin) & 1U);
     }
+
     return RET_enuErrorStatus;
 }
 /******************************************************************************/

@@ -701,9 +701,9 @@ RCC_enuErrorStatus  RCC_enuSetPrescaler(uint32_t BUS)
     RCC_enuErrorStatus RET_enuErrorStatus = RCC_FUNC_DONE;
 
     if (BUS != BUS_AHB_PRE_DIV1 &&
-        BUS != BUS_AHB_PRE__DIV2 &&
-        BUS != BUS_AHB_PRE__DIV4 &&
-        BUS != BUS_AHB_PRE__DIV8 &&
+        BUS != BUS_AHB_PRE_DIV2 &&
+        BUS != BUS_AHB_PRE_DIV4 &&
+        BUS != BUS_AHB_PRE_DIV8 &&
         BUS != BUS_AHB_PRE_DIV16 &&
         BUS != BUS_AHB_PRE_DIV64 &&
         BUS != BUS_AHB_PRE_DIV128 &&
@@ -748,9 +748,9 @@ RCC_enuErrorStatus  RCC_enuGetPrescaler(uint32_t BUS, uint32_t * BusPrescaler)
     RCC_enuErrorStatus RET_enuErrorStatus = RCC_FUNC_DONE;
 
     if (BUS != BUS_AHB_PRE_DIV1 &&
-        BUS != BUS_AHB_PRE__DIV2 &&
-        BUS != BUS_AHB_PRE__DIV4 &&
-        BUS != BUS_AHB_PRE__DIV8 &&
+        BUS != BUS_AHB_PRE_DIV2 &&
+        BUS != BUS_AHB_PRE_DIV4 &&
+        BUS != BUS_AHB_PRE_DIV8 &&
         BUS != BUS_AHB_PRE_DIV16 &&
         BUS != BUS_AHB_PRE_DIV64 &&
         BUS != BUS_AHB_PRE_DIV128 &&
