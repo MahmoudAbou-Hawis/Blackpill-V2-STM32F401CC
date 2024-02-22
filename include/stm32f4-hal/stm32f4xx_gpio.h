@@ -174,6 +174,12 @@ extern "C"
 /******************************************************************************/
 
 /**
+ * @defgroup GPIO_Modes GPIO Modes
+ * @brief Definitions for GPIO pin modes
+ * @{
+ */
+
+/**
  * @brief GPIO Mode for Output Push-Pull
  * Pins configured in this mode can output a signal that actively 
  * drives the pin high or low.
@@ -294,6 +300,20 @@ extern "C"
  * @brief GPIO Mode for Alternate Function 15 (Not specified)
  */
 #define GPIO_MODE_AF15 ((uint32_t)0x0020F002)
+/** @} */
+
+
+/**
+ * @defgroup GPIO_Alternate_Function GPIO Alternate Function type
+ * @brief GPIO pin alternate function types
+ * @{
+ */
+#define GPIO_AT_None        ((uint8_t)0)   /**< No alternate function */
+#define GPIO_AT_PushPull    ((uint8_t)1)   /**< Push-pull output type */
+#define GPIO_AT_OpenDrain   ((uint8_t)2)   /**< Open-drain output type */
+#define GPIO_AT_PullUp      ((uint8_t)3)   /**< Pull-up input type */
+#define GPIO_AT_PullDown    ((uint8_t)4)   /**< Pull-down input type */
+/** @} */
 
 
 
@@ -363,6 +383,7 @@ typedef enum
     NOT_VALID_PORT,
     NOT_VALID_SPEED,
     NOT_VALID_STATUS,
+    NOT_VALID_AT_TYPE,
     SUCCESS
 } GPIO_enuErrorStatus;
 
@@ -386,7 +407,8 @@ typedef struct
     uint8_t  GPIO_Pin;     /**< GPIO pin number */
     uint8_t  GPIO_Speed;   /**< Speed setting for the GPIO pin */
     uint32_t GPIO_Mode;    /**< Mode setting for the GPIO pin */
-
+    uint8_t  GPIO_AT_Type; /**< GPIO pin alternate function type.
+                             Refer to @ref GPIO_Alternate_Function */
 } gpioPin_t;
 
 
@@ -450,7 +472,7 @@ GPIO_enuErrorStatus GPIO_SetPinValue(void * GPIO_Port, uint8_t GPIO_Pin, uint32_
  * 
  * @param GPIO_Port Pointer to the base address of the GPIO port.
  * @param GPIO_Pin The number of the GPIO pin.
- * @param value Pointer to a variable where the current state of the GPIO pin will be stored.
+ * @param value[in out] Pointer to a variable where the current state of the GPIO pin will be stored.
  * 
  * @return: Indicates the success or failure of the operation.
  *   - `SUCCESS`: The pin value was retrieved successfully.

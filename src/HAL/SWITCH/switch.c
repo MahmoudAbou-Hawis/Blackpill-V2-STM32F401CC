@@ -145,6 +145,8 @@ SWITCH_errorStatus SWITCH_enuInit(void) {
        /* Set desired GPIO configuration settings */
        pinCfg.GPIO_Speed = GPIO_SPEED_VERY_HIGH;
 
+       /** Pin is not alternate function*/
+       pinCfg.GPIO_AT_Type = GPIO_AT_None;
 
        /* Initialize the GPIO pin */
        if (GPIO_Init(&pinCfg) != SUCCESS) {

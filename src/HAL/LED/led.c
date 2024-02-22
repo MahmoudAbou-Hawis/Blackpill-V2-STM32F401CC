@@ -141,8 +141,9 @@ LED_errorStatus LED_enuInit(void) {
        pinCfg.GPIO_Port = LEDs[ledIdx].GPIO_Port;
 
        /* Set desired GPIO configuration settings */
-       pinCfg.GPIO_Speed = GPIO_SPEED_VERY_HIGH;
-       pinCfg.GPIO_Mode = GPIO_MODE_OUT_PP;
+       pinCfg.GPIO_Speed   = GPIO_SPEED_VERY_HIGH;
+       pinCfg.GPIO_Mode    = GPIO_MODE_OUT_PP;
+       pinCfg.GPIO_AT_Type = GPIO_AT_None;
 
        /* Initialize the GPIO pin */
        if (GPIO_Init(&pinCfg) != SUCCESS) {

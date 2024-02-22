@@ -52,6 +52,10 @@
 
 #define INPUT_MODE                     0U
 
+#define PULLUP_MODE                    1U
+
+#define PULLDOWN_MODE                  2U
+
 /******************************************************************************/
 
 /******************************************************************************/
@@ -97,6 +101,14 @@
                                      ((__GPIOx__) == GPIO_PORTD)        || \
                                      ((__GPIOx__) == GPIO_PORTE)        || \
                                      ((__GPIOx__) == GPIO_PORTH))
+
+
+
+#define IS_ALTERNATE_TYPE(__AT__)    (((__AT__) == GPIO_AT_None)        || \
+                                      ((__AT__) == GPIO_AT_PullUp)      || \
+                                      ((__AT__) == GPIO_AT_PullDown)    || \
+                                      ((__AT__) == GPIO_AT_OpenDrain)   || \
+                                      ((__AT__) == GPIO_AT_PushPull))
 
 
 #define IS_GPIO_STATE(__STATE__)    (((__STATE__) == GPIO_STATE_RESET) || ((__STATE__) == GPIO_STATE_SET))
@@ -210,6 +222,10 @@ GPIO_enuErrorStatus GPIO_Init(gpioPin_t * gpioPin)
     {
         RET_enuErrorStatus = NOT_VALID_PIN;
     }
+    else if(!IS_ALTERNATE_TYPE(gpioPin->GPIO_AT_Type))
+    {
+        RET_enuErrorStatus = NOT_VALID_AT_TYPE;
+    }
     else
     {
         /** */
@@ -235,6 +251,34 @@ GPIO_enuErrorStatus GPIO_Init(gpioPin_t * gpioPin)
                                 (GET_MODE_CFG_VAL(gpioPin->GPIO_Mode) << (gpioPin->GPIO_Pin *4 ));
             
             gpio->AFR[(gpioPin->GPIO_Pin/8)] = alternate_function;
+            
+            
+            /** Used if the alternate function is pullup or pull down */
+            uint32_t input_mode = gpio->PUPDR;
+            CLR_PIN_IN_CFG(input_mode,gpioPin->GPIO_Pin);
+            
+            switch (gpioPin->GPIO_AT_Type)
+            {
+            case GPIO_AT_OpenDrain:
+                gpio->OTYPER |= (1 << gpioPin->GPIO_Pin);
+                break;
+
+            case GPIO_AT_PullUp:
+                input_mode |= ( PULLUP_MODE << (gpioPin->GPIO_Pin *2));
+                gpio->PUPDR = input_mode;
+                break;
+
+            case GPIO_AT_PullDown:
+                input_mode |= ( PULLDOWN_MODE << (gpioPin->GPIO_Pin *2));
+                gpio->PUPDR = input_mode;
+                break;
+
+            case GPIO_AT_PushPull:
+                gpio->OTYPER &= ~(1 << gpioPin->GPIO_Pin);
+                break;
+            default:
+                break;
+            }
         }
         else if(IS_OUTPUT_MODE(gpioPin->GPIO_Mode))
         {
