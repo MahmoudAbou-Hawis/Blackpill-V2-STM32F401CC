@@ -1,0 +1,93 @@
+-include config.mk
+
+######################################
+# Private variable PLEASE don't edit #
+###################################### 
+
+# Define a variable SRC_FILES to hold a list of all .c files in the source directories
+SRC_FILES := $(foreach dir,$(SRC_DIRECTORIES),$(wildcard $(dir)/*.c)) 
+
+
+# Define a variable OBJ_FILES to hold a list of object files derived from the source files by replacing .c with .o
+OBJ_FILES :=  $(patsubst %.c,%.o,$(SRC_FILES))  $(patsubst %.c,%.o,$(SRC_FILES_PATHES)) 
+
+# Define a variable INC_FILES to hold a list of all .h files in the include directories
+INC := $(foreach val,$(INC_DIRECTORIES),-I $(val))
+
+# Define a variable LIBS to hold a list of all libraries in the library directories
+LIBS_PATHS := $(foreach dir,$(LIBS_DIRECTORIES), $(wildcard $(dir)/*.so) $(wildcard $(dir)/*.a))
+LIBS_PREFIX = $(addprefix -L./,$(LIBS_PATHS))
+LIBS := $(addprefix -l,$(subst lib,,$(notdir $(basename $(LIBS_PREFIX)))))
+LIBS_DIR := $(addprefix -L./,$(LIBS_DIRECTORIES))
+
+DEPS = $(SRC_FILES:.c=.d)
+
+#COMPILER_FLAG variable 
+$(OBJ_FILES) : COMPILER_FLAG = -c
+$(DEPS) : COMPILER_FLAG = -MM
+
+# Detect the operating system
+ifeq ($(OS),Windows_NT)
+    PLATFORM := Windows
+else
+    PLATFORM := $(shell uname)
+endif
+
+# Determine compiler based on the platform
+ifeq ($(PLATFORM),Windows)
+    RM_CMD := DEL /Q build
+    MK_CMD := md
+    SIZE_CMD = size ./build/$(EXECUTABLE_FILE).exe
+else ifeq ($(PLATFORM),Linux)
+    RM_CMD := rm -r ./build/*
+    MK_CMD := mkdir
+    SIZE_CMD = size ./build/$(EXECUTABLE_FILE)
+else
+    $(error Unsupported platform: $(PLATFORM))
+endif
+
+
+
+.PHONY: clean  all compile help
+
+
+help:
+	@echo "The following are some of the valid targets for this Makefile:"
+	@echo "... all (the default if no target is provided)"
+	@echo "... help (Show this help message.)"
+	@echo "... link (Link object files into an executable ,hex and bin.)"
+	@echo "... compile (Compile source files into object files.)"
+	@echo "... clean (Remove build artifacts.)"
+	@echo "... depend (to exteract depandices)"
+
+all: compile link depend
+
+
+compile:$(OBJ_FILES) 
+	@echo compiling end
+    ifeq ($(strip $(wildcard build)),)
+    	$(shell $(MK_CMD) build)
+    endif
+
+
+link :  
+	@echo "Linking ..."
+	@$(CC) $(LIBS_DIR) $(LIBS) $(addprefix ./build/,$(notdir $(OBJ_FILES)))  -o ./build/$(EXECUTABLE_FILE)
+	@echo "The size of the executable is"
+	@$(SIZE_CMD)
+	@objdump -d -M intel ./build/$(EXECUTABLE_FILE).exe > ./build/$(EXECUTABLE_FILE).hex
+	@objcopy -O binary ./build/$(EXECUTABLE_FILE).exe ./build/$(EXECUTABLE_FILE).bin
+	@echo "Linking end ..."
+
+clean:
+	@$(RM_CMD)
+
+
+-include ./build/*.d
+depend: $(DEPS)
+
+%.o:%.c
+	@$(CC) $(COMPILER_FLAG) $(C_FLAGS) $(INC) $(C_FLAGS) $< -o $(addprefix ./build/,$(notdir $@))
+
+%.d:%.c
+	@$(CC) $(COMPILER_FLAG) $(LINKER_FLAGS) $(INC)  $< -o $(addprefix ./build/,$(notdir $@))
