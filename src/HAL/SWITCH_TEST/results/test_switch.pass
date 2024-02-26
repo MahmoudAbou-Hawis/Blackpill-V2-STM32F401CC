@@ -1,0 +1,50 @@
+---
+:source:
+  :path: test
+  :file: test_switch.c
+:successes:
+- :test: test_init_function_test
+  :line: 11
+  :message: ''
+  :unity_test_time: 0
+- :test: test_init_function_test_Two
+  :line: 17
+  :message: ''
+  :unity_test_time: 0
+- :test: test_Button_Connected_PullDown_PRESSED
+  :line: 23
+  :message: ''
+  :unity_test_time: 0
+- :test: test_Button_Connected_PullDown_NOT_PRESSED
+  :line: 31
+  :message: ''
+  :unity_test_time: 0
+- :test: test_Button_Connected_PullUp_PRESSED
+  :line: 40
+  :message: ''
+  :unity_test_time: 0
+- :test: test_Button_Connected_PullUp_NOT_PRESSED
+  :line: 48
+  :message: ''
+  :unity_test_time: 0
+- :test: test_Wrong_Params_GetStatus_Fun
+  :line: 56
+  :message: ''
+  :unity_test_time: 0
+- :test: test_Wrong_Params_GetStatus_Fun_two
+  :line: 62
+  :message: ''
+  :unity_test_time: 0
+- :test: test_Wrong_Params_GetStatus_Fun_Three
+  :line: 68
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 9
+  :passed: 9
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.1520396000000801
