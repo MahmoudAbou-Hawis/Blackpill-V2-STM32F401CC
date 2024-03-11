@@ -54,23 +54,23 @@
 /******************************************************************************/
 
 /**
- * @brief  Defines 'read / write' structure member permissions  
+ * @brief  Defines 'read / write' structure member permissions.
  */
 #define     __IOM    volatile      
 
 /**
- * @brief Defines 'write only' structure  member permissions
+ * @brief Defines 'write only' structure  member permissions.
  */
 #define     __OM     volatile      
 
 /**
- * @brief Defines 'read only' structure member permissions
+ * @brief Defines 'read only' structure member permissions.
  */
 #define     __IM     volatile const     
 
 
 /**
- * @brief System Control Block Application Interrupt and Reset Control Register
+ * @brief System Control Block Application Interrupt and Reset Control Register.
  */
 #define     SCB_AIRCR  *((__IOM uint32_t*)0xE000ED0C)
 
@@ -80,24 +80,63 @@
  */
 #define __NO_RETURN  __attribute__((__noreturn__)) void 
 
+/**
+ * @brief SCB AIRCR VECTKEY Position.
+ */
+#define SCB_AIRCR_VECTKEY_Pos                  16U
 
-
-#define SCB_AIRCR_VECTKEY_Pos               16U
+/**
+ * @brief SCB AIRCR VECTKEY fixed value.
+ */
 #define SCB_AIRCR_VECTKEY_VALUE               (0x5FAUL << SCB_AIRCR_VECTKEY_Pos) 
 
+/**
+ * @brief SCB AIRCR PRIGROUP Position.
+ */
+#define SCB_AIRCR_PRIGROUP_Pos              8U   
 
-#define NVIC                                  ((NVIC_t* const)0xE000E100)
-
-#define SCB_AIRCR_PRIGROUP_Pos              8U                                           
+/**
+ * @brief SCB AIRCR PRIGROUP Position.
+ */
 #define SCB_AIRCR_PRIGROUP_Msk             (7UL << SCB_AIRCR_PRIGROUP_Pos) 
 
+
+/**
+* @brief Specifies the number of bits implemented for priority levels in the NVIC 
+*        (Nested Vectored Interrupt Controller).
+*/
 #define __NVIC_PRIO_BITS                    4U
+
+/**
+ * @brief NVIC priority mask.
+ */
 #define __NVIC_PRIO_Msk                     ((uint8_t)0x0F)
 
-#define SCB_AIRCR_SYSRESETREQ_Pos           2U                                          
+
+/**
+*@brief Position of the System Reset Request bit in the Application Interrupt 
+        and Reset Control Register (AIRCR).
+*/
+#define SCB_AIRCR_SYSRESETREQ_Pos           2U            
+
+/**
+*
+*@brief Mask for the System Reset Request bit in the Application Interrupt 
+*       and Reset Control Register (AIRCR).
+*/
 #define SCB_AIRCR_SYSRESETREQ_Msk          (1UL << SCB_AIRCR_SYSRESETREQ_Pos) 
 
-#define NO_PREEMPT_PRIORITY                           5
+
+/**
+*@brief When using PRIORITYGROUP_4, there is no preemption priority,
+*        only subpriority levels are available.
+*/
+#define NO_PREEMPT_PRIORITY                   5UL
+
+/**
+ * @brief  NVIC base address.
+ */
+#define NVIC                                  ((NVIC_t* const)0xE000E100)
 
 /******************************************************************************/
 
@@ -107,6 +146,9 @@
 /* PRIVATE MACROS */
 /******************************************************************************/
 
+/**
+ * @brief Macro to verify if the provided priority group value is valid.
+ */
 #define  IS_NVIC_PRIORITY_GROUP(__PRIORITY_GROUP) \
                                     ((__PRIORITY_GROUP == PRIORITYGROUP_0)  || \
                                      (__PRIORITY_GROUP == PRIORITYGROUP_1)  || \
@@ -115,13 +157,32 @@
                                      (__PRIORITY_GROUP == PRIORITYGROUP_4))
 
 
+
+/**
+* @brief Macro to check if the supplied interrupt is invalid.
+*/
 #define IS_NOT_NVIC_IRQn(__IRQn)    (__IRQn < WWDG_IRQn || __IRQn > SPI4_IRQn)
 
+/**
+ * @brief Macro to check is the supplied preemption priority is invalid.  
+ */
 #define IS_NOT_NVIC_PREEMPTION_PRIORITY(PRIORITY)  ((PRIORITY) > 0x10U)
 
+/**
+ * @brief Macro to check is the supplied sub priority is invalid. 
+ */
 #define IS_NOT_NVIC_SUB_PRIORITY(PRIORITY)         ((PRIORITY) > 0x10U)
 
+/**
+ * @brief Macro used to get the preempt PRIORITY POSition in the implemnted 
+ *        bits in nvic priority bits according the priority group.
+ */
 
+/**
+* @brief Macro used to retrieve the position of the preemptive priority bits 
+*        within the implemented bits in the NVIC priority bits, based on the
+*        configured priority group.
+*/
 #define GET_PREEMPT_PRIORITY_POS(GROUP)        ((PRIORITYGROUP_4 - GROUP) >> 8U)
 
 /******************************************************************************/
@@ -236,14 +297,22 @@ NVIC_ErrorStatus_t NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority,
     }
     else
     {
+        /** Get the priority group */
         uint32_t PriorityGroupTmp = GetPriorityGrouping();
         uint32_t PreemptPriorityPos;
+
+        /** Get the preempt priority position depend on the priority group*/
         PreemptPriorityPos =(__NVIC_PRIO_BITS ) - (((PriorityGroupTmp == PRIORITYGROUP_4) ?
                             NO_PREEMPT_PRIORITY : 
                             GET_PREEMPT_PRIORITY_POS(PriorityGroupTmp)));
+
+        /** If the the priority group is 4 with no preempt priority */
         PreemptPriorityPos = (PreemptPriorityPos == -1) ? __NVIC_PRIO_BITS : PreemptPriorityPos;
+
+        /** Selects only the relevant bits based on the configured priority group.*/
         SubPriority &= ~(__NVIC_PRIO_Msk << PreemptPriorityPos);
 
+        /** assign the priority to the IRQn */
         NVIC->IPR[IRQn] = (uint8_t)((( PreemptPriority << PreemptPriorityPos) | SubPriority) << 4U);
     }
     return RET_ErrorStatus;
@@ -258,6 +327,7 @@ NVIC_ErrorStatus_t NVIC_EnableIRQ(IRQn_Type IRQn)
     }
     else
     {
+        /**Enable the provided IRQn*/
         NVIC->ISERx[IRQn >> 5UL] = (1 << (IRQn % 32));
     }
     return RET_ErrorStatus;
@@ -272,6 +342,7 @@ NVIC_ErrorStatus_t NVIC_DisableIRQ(IRQn_Type IRQn)
     }
     else
     {
+        /**Disable the provided IRQn*/
         NVIC->ICER[IRQn >> 5UL] = (1 << (IRQn % 32));
     }
     return RET_ErrorStatus;
@@ -279,7 +350,10 @@ NVIC_ErrorStatus_t NVIC_DisableIRQ(IRQn_Type IRQn)
 
 __NO_RETURN NVIC_SystemReset(void)
 {
+    /** Reset request */
     SCB_AIRCR |= (1 << SCB_AIRCR_SYSRESETREQ_Msk);
+
+    /**waiting until the request is handled */
     while (1);
 }
 
@@ -306,11 +380,21 @@ NVIC_ErrorStatus_t NVIC_GetPriority(IRQn_Type IRQn, uint32_t PriorityGroup,
     }
     else
     {
+        /** Get the current priority which will decoded */
         uint8_t Priority = NVIC->IPR[IRQn];
+
+        /** Moves the priority to the lower 4 bits  */
         Priority >>= __NVIC_PRIO_BITS ;
+
+        /** Retrieves the number of bits allocated for the preemptive priority based on
+            the configured priority group. */
         uint32_t PreemptPriorityBits = 
                                 GET_PREEMPT_PRIORITY_POS(PriorityGroup);
+
+        /** The preempt priority  */
         *pPreemptPriority = (Priority >> (__NVIC_PRIO_BITS - PreemptPriorityBits));
+
+        /** The sub priority  */
         *pSubPriority     = (Priority & 
                             ~(__NVIC_PRIO_Msk << (__NVIC_PRIO_BITS - PreemptPriorityBits)));
         
@@ -327,6 +411,7 @@ NVIC_ErrorStatus_t NVIC_SetPendingIRQ(IRQn_Type IRQn)
     }
     else
     {
+        /** Sets pending status for the specified IRQn. */
         NVIC->ISPR[IRQn >> 5UL] = (1 << (IRQn % 32));
     }
     return RET_ErrorStatus;
@@ -345,6 +430,7 @@ NVIC_ErrorStatus_t NVIC_GetPendingIRQ(IRQn_Type IRQn, uint32_t * pPendingState)
     }
     else
     {
+        /** Get the pending status for the specified IRQn. */
         *pPendingState = NVIC->ISPR[IRQn >> 5UL] & (1 << (IRQn%32));
     } 
     return RET_ErrorStatus;
@@ -361,6 +447,7 @@ NVIC_ErrorStatus_t NVIC_ClearPendingIRQ(IRQn_Type IRQn)
     }
     else
     {
+        /** Clear pending status for the specified IRQn. */
         NVIC->ICPR[IRQn >> 5UL] = (uint32_t)(1UL << (IRQn % 32));
     }
     return RET_ErrorStatus;
@@ -379,6 +466,7 @@ NVIC_ErrorStatus_t NVIC_GetActive(IRQn_Type IRQn,uint32_t * pActiveState)
     }
     else
     {
+        /** Get the active status for the specified IRQn. */
         *pActiveState = NVIC->IABR[IRQn >> 5UL] & (1 << (IRQn%32));
     } 
     return RET_ErrorStatus;
