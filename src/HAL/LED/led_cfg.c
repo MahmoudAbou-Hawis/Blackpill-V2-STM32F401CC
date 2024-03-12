@@ -82,9 +82,9 @@ const LED_CFG_t LEDs[_LEDs_NUM] =
 {
     [ALARM_LED] = 
     {
-        .GPIO_Port = GPIO_PORTC,
-        .GPIO_Pin = GPIO_PIN13,
-        .LED_Connection = LED_CONNECTION_REVERSE,
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin = GPIO_PIN0,
+        .LED_Connection = LED_CONNECTION_FORWARD,
         .LED_State = LED_STATE_OFF
     }
 };

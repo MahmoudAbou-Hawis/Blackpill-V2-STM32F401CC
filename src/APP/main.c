@@ -36,7 +36,7 @@ int main(void)
 			LED_enuSetStatus(ALARM_LED,LED_STATE_OFF);
 		}
     }
-	
+
     return 0;
 }
 #endif

@@ -1,12 +1,15 @@
 {
     "cSpell.words": [
         "AIRCR",
+        "CALIB",
+        "CLKSRC",
         "GPIO",
         "NVIC",
         "PORTA",
         "PORTC",
         "Prescaler",
         "PRIORITYGROUP",
+        "systick",
         "VECTKEY"
     ],
     "C_Cpp.errorSquiggles": "disabled"
