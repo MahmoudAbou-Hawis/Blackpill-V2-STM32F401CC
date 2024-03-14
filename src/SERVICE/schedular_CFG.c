@@ -37,6 +37,11 @@
 /* PRIVATE DEFINES */
 /******************************************************************************/
 
+
+extern void CheckSwitchesStates(void);
+
+extern void App(void);
+
 extern void traffic_start(void);
 
 /**
@@ -51,10 +56,24 @@ const Schedular_runnable_t AllRunnablesSystemList[MAX_RUNNABLES] =
 {
     [PRIORITY_0] =
     {
+        .CallBack = CheckSwitchesStates,
+        .DelayMS = 0,
+        .periodicityMS = 5,
+        .name = "check the button states"
+    },
+    [PRIORITY_1] = 
+    {
+        .CallBack = App,
+        .DelayMS = 50,
+        .periodicityMS = 50,
+        .name = "alarm"
+    },
+    [PRIORITY_2] =
+    {
         .CallBack = traffic_start,
         .DelayMS = 0,
         .periodicityMS = 2000,
-        .name = "Toggling led"
+        .name = "Traffic light"
     }
 };
 

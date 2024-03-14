@@ -146,7 +146,7 @@ void traffic_start(void)
 {
     /* Calculate the time needed to make a decision regarding which state to 
        run and what to stop.*/
-    Counter += TICK_TIME;
+    Counter += 2000;
     switch (TrafficCurrentState)
     {
     case GREEN:

@@ -66,6 +66,8 @@
 
 
 
+#define     STABLE_READ                     5
+
 /******************************************************************************/
 /* PRIVATE ENUMS */
 /******************************************************************************/
@@ -75,7 +77,12 @@
 /******************************************************************************/
 /* PRIVATE TYPES */
 /******************************************************************************/
-
+typedef struct 
+{
+    uint32_t previous;
+    uint32_t Counts;
+    uint32_t CurrentState;
+} SwitchStatusBlock;
 
 /******************************************************************************/
 
@@ -90,6 +97,14 @@
 /* PRIVATE VARIABLE DEFINITIONS */
 /******************************************************************************/
 
+static SwitchStatusBlock SwitchesStatus[_SWITCHES_NUM];
+
+/******************************************************************************/
+
+/******************************************************************************/
+/* PUBLIC CONSTANT DEFINITIONS */
+/******************************************************************************/
+
 /**
  * @brief External Declaration of Switch Configuration Array
  *
@@ -98,12 +113,6 @@
  * in the system, including GPIO port, pin number, and connection type (pull-up or pull-down).
  */
 extern const SWITCH_CFG_t switches[_SWITCHES_NUM];
-
-/******************************************************************************/
-
-/******************************************************************************/
-/* PUBLIC CONSTANT DEFINITIONS */
-/******************************************************************************/
 
 /******************************************************************************/
 
@@ -148,6 +157,11 @@ SWITCH_errorStatus SWITCH_enuInit(void) {
        /** Pin is not alternate function*/
        pinCfg.GPIO_AT_Type = GPIO_AT_None;
 
+        /**When starting the system all switches not pressed  it is the initial value*/
+        SwitchesStatus[switchIdx].CurrentState = SWITCH_STATUS_NOT_PRESSED;
+        SwitchesStatus[switchIdx].Counts = 0;
+        SwitchesStatus[switchIdx].previous = 0;
+
        /* Initialize the GPIO pin */
        if (GPIO_Init(&pinCfg) != SUCCESS) {
            RET_enuErrorStatus = SWITCH_CONFIGURATION_FAILED;
@@ -162,24 +176,51 @@ SWITCH_errorStatus SWITCH_enuInit(void) {
 }
 
 SWITCH_errorStatus SWITCH_enuGetStatus(uint8_t switchName, 
-                                       uint32_t *switchStatus) {
-
-    SWITCH_errorStatus RET_enuErrorStatus = SWITCH_SUCCESS;
-                                        
+                                       uint32_t *switchStatus) 
+{
+    SWITCH_errorStatus RET_enuErrorStatus = SWITCH_SUCCESS;    
     /* Validate input arguments */
     if (IS_NOT_SWITCH(switchName) || IS_NULL(switchStatus)) {
         RET_enuErrorStatus = SWITCH_FAILED;
-    } else {
+    }
+    else{
+        /** get the current state of the switch. */
+        *switchStatus = SwitchesStatus[switchName].CurrentState;
+    }
+    return RET_enuErrorStatus;
+}
+
+
+void CheckSwitchesStates(void)
+{
+    uint32_t  switchStatus;
+    for(uint32_t switchIdx = 0 ; switchIdx < _SWITCHES_NUM ; switchIdx++)
+    {
         /* Get switch configuration from the switches array */
-        SWITCH_CFG_t switchConfig = switches[switchName];
+        SWITCH_CFG_t switchConfig = switches[switchIdx];
         
         /* Set the GPIO pin based on the desired state and connection type */
         GPIO_GetPinValue(switchConfig.GPIO_Port, switchConfig.GPIO_Pin,
-                         switchStatus);
+                         &switchStatus);
 
-        *switchStatus = (*switchStatus ^ switchConfig.SWITCH_Connection); 
+        switchStatus = (switchStatus ^ switchConfig.SWITCH_Connection); 
+
+        if(switchStatus == SwitchesStatus[switchIdx].previous)
+        {
+            SwitchesStatus[switchIdx].Counts++;
+        }
+        else
+        {
+            SwitchesStatus[switchIdx].Counts = 0;
+        }
+        if(SwitchesStatus[switchIdx].Counts == STABLE_READ )
+        {
+            SwitchesStatus[switchIdx].CurrentState = switchStatus;
+            SwitchesStatus[switchIdx].Counts = 0;
+        }
+
+        SwitchesStatus[switchIdx].previous = switchStatus;
     }
-    return RET_enuErrorStatus;
 }
 
 /******************************************************************************/

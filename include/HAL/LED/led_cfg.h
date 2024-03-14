@@ -75,6 +75,7 @@ typedef enum
   TRAFFIC_RED_LED,
   TRAFFIC_YELLOW_LED,
   TRAFFIC_GREEN_LED ,
+  ALARM_LED,
   _LEDs_NUM
 } LEDs_t;
 

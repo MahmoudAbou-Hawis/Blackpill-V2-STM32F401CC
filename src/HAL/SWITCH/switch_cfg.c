@@ -68,8 +68,8 @@ const SWITCH_CFG_t switches[_SWITCHES_NUM] =
 {
     [ALARM_SWITCH] =
     {
-        .GPIO_Pin = GPIO_PIN1,
-        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin = GPIO_PIN15,
+        .GPIO_Port = GPIO_PORTC,
         .SWITCH_Connection = SWITCH_CONNECTION_PULLDOWN
     }
 };
