@@ -190,7 +190,10 @@ SWITCH_errorStatus SWITCH_enuGetStatus(uint8_t switchName,
     return RET_enuErrorStatus;
 }
 
-
+/**
+ * @brief  This function(Runnable) is intended to be executed periodically
+ *          by a scheduler, typically every 5 milliseconds.
+ */
 void CheckSwitchesStates(void)
 {
     uint32_t  switchStatus;
