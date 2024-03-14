@@ -1,29 +1,38 @@
-/******************************************************************************/
+/*******************************************************************************/
 /**
- * @file led_cfg.h
- * @brief LED Configuration Header
+ * @file scheduler.h
+ * @brief Header file for a task scheduling library for STM32F401CC microcontrollers.
+ *
+ * This header file provides declarations for functions used to
+ * manage the execution of runnables in programs running on STM32F401CC microcontrollers.
+ * It likely includes mechanisms for defining runnables, scheduling their execution
+ * at specific times or intervals, and potentially managing resources shared between tasks.
  *
  * @par Project Name
- * Embedded LED Configuration for STM32F401CC
+ * stm32fxx services
  *
  * @par Code Language
  * C
  *
  * @par Description
- * This header file defines structures and constants for LED configurations,
- * including GPIO port, pin number, connection type, and default state.
- * 
+ * A more detailed description of the scheduler's functionality can be provided here.
+ * This include:
+ *   - Supported scheduling types (e.g., periodic)
+ *   - runnable management mechanisms (e.g., creation, priority)
+ *
  * @par Author
  * Mahmoud Abou-Hawis
  *
- */
-/******************************************************************************/
+ * @par Target Microcontroller
+ * STM32F401CC
+ *
+ *******************************************************************************/
 
 /******************************************************************************/
 /* MULTIPLE INCLUSION GUARD */
 /******************************************************************************/
-#ifndef LED_CFG_H_
-#define LED_CFG_H_
+#ifndef SCHEDULAR_H_
+#define SCHEDULAR_H_
 /******************************************************************************/
 
 /******************************************************************************/
@@ -38,8 +47,8 @@ extern "C"
 /******************************************************************************/
 /* INCLUDES */
 /******************************************************************************/
-
-
+#include <stdint.h>
+#include <stddef.h>
 /******************************************************************************/
 
 /******************************************************************************/
@@ -59,30 +68,50 @@ extern "C"
 /* PUBLIC ENUMS */
 /******************************************************************************/
 
-/*
- * Enumeration defining different LEDs.
- * 
- * This enumeration is used to represent different LEDs in the system.
- * 
- * - _LEDs_NUM: Represents the total number of LEDs in the system.
- * 
- * Note: The symbol '_' prefix conventionally indicates a private or internal
- * symbol. In this case, _LEDs_NUM is used internally to represent the total
- * number of LEDs and should not be accessed directly outside this module.
- */
-typedef enum
-{
-  TRAFFIC_RED_LED,
-  TRAFFIC_YELLOW_LED,
-  TRAFFIC_GREEN_LED ,
-  _LEDs_NUM
-} LEDs_t;
-
 /******************************************************************************/
 
 /******************************************************************************/
 /* PUBLIC TYPES */
 /******************************************************************************/
+
+/**
+ * @brief Function pointer for runnable callbacks
+ */
+typedef void (*runnableCallBack)(void);
+
+/**
+ * @brief Structure to represent a runnable for the scheduler.
+ */
+typedef struct {
+    /**
+     * @brief Name of the runnable .
+     */
+    char *name;
+
+    /**
+     * @brief Periodicity in milliseconds (how often to run the runnable).
+     */
+    uint32_t periodicityMS;
+
+    /**
+     * @brief Priority of the runnable (smaller number indicates higher priority).
+     * Used by the scheduler to determine the order of execution.
+     */
+    uint32_t priority;
+
+    /**
+     * @brief Callback function pointer to be executed when the runnable is triggered.
+     * The specific signature of `runnableCallBack` depends on your application.
+     */
+    runnableCallBack CallBack;
+
+    /**
+     * @brief Delay in milliseconds before the first execution (optional).
+     * Useful for delaying the start of certain tasks or coordinating execution.
+     */
+    uint32_t DelayMS;
+} Schedular_runnable_t;
+
 
 
 /******************************************************************************/
@@ -97,7 +126,30 @@ typedef enum
 /* PUBLIC VARIABLE DECLARATIONS */
 /******************************************************************************/
 
+/**
+ * @brief Initializes the scheduler.
+ *
+ * @note This function must be called before using the scheduler to configure its
+ * internal state and potentially set up any hardware resources required
+ * for task scheduling (e.g., systick).
+ *
+ * It is typically called once during program initialization.
+ */
+void schedular_init(void);
 
+
+/**
+ * @brief Starts the scheduler.
+ *
+ * This function initiates the execution of tasks managed by the scheduler.
+ * Once called, the scheduler typically enters a loop where it monitors periodic
+ * timing, determines which task to run next based on priority and its period,
+ * and invokes the corresponding task callback function.
+ * 
+ * @note It is typically called after successful scheduler initialization 
+ *       (`scheduler_init`).
+ */
+void schedular_start(void);
 /******************************************************************************/
 
 /******************************************************************************/
@@ -118,5 +170,5 @@ typedef enum
 /******************************************************************************/
 /* MULTIPLE INCLUSION GUARD */
 /******************************************************************************/
-#endif /* LED_CFG_H_ */
+#endif /* SCHEDULAR_H_ */
 /******************************************************************************/

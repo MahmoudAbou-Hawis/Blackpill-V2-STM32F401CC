@@ -1,18 +1,24 @@
 /******************************************************************************/
 /**
- * @file led_cfg.c
- * @brief LED Configuration
+ * @file schedular_CFG.c
+ * @brief Configuration file for the scheduler.
  *
  * @par Project Name
- * Embedded LED Configuration for STM32F401CC
+ *  stm32fxx services
  *
  * @par Code Language
  * C
  *
  * @par Description
- * This file contains configurations for LED pins, including GPIO port, pin number,
- * connection type, and default state.
- * 
+ * This file likely contains configuration settings for the scheduler,
+ * allowing you to customize its behavior without modifying the core code.
+ * These settings include all runnable configurations:
+ *   - Periodic tick interval 
+ *   - runnable priorities
+ *   - runnable callback
+ *   - runnable delay
+ *   - runnable name 
+ *
  * @par Author
  * Mahmoud Abou-Hawis
  *
@@ -23,14 +29,34 @@
 /******************************************************************************/
 /* INCLUDES */
 /******************************************************************************/
-#include "led.h"
-#include "stm32f4xx_gpio.h"
+#include "schedular.h"
+#include "schedular_CFG.h"
 /******************************************************************************/
 
 /******************************************************************************/
 /* PRIVATE DEFINES */
 /******************************************************************************/
 
+extern void traffic_start(void);
+
+/**
+ * @brief Array to store all runnable tasks in the system.
+ *
+ * @par This constant array `AllRunnableInSystemList` of type `Schedular_runnable_t`
+ * holds up to `MAX_RUNNABLES` (defined in schedular_CFG.h) runnables  
+ * These runnables are managed by the scheduler and will be scheduled for execution 
+ * based on their priority and periodicity.
+ */
+const Schedular_runnable_t AllRunnablesSystemList[MAX_RUNNABLES] =
+{
+    [PRIORITY_0] =
+    {
+        .CallBack = traffic_start,
+        .DelayMS = 0,
+        .periodicityMS = 2000,
+        .name = "Toggling led"
+    }
+};
 
 /******************************************************************************/
 
@@ -70,39 +96,6 @@
 /******************************************************************************/
 /* PUBLIC CONSTANT DEFINITIONS */
 /******************************************************************************/
-
-/**
- * @brief LED Configuration Array
- *
- * This array contains configurations for all LEDs defined in the system.
- * Each element represents the configuration of a specific LED, including
- * the GPIO port, pin number, connection type, and default state.
- */
-const LED_CFG_t LEDs[_LEDs_NUM] =
-{
-    [TRAFFIC_RED_LED] = 
-    {
-        .GPIO_Port = GPIO_PORTA,
-        .GPIO_Pin = GPIO_PIN0,
-        .LED_Connection = LED_CONNECTION_FORWARD,
-        .LED_State = LED_STATE_OFF
-    }
-    ,
-    [TRAFFIC_GREEN_LED] =
-    {
-        .GPIO_Port = GPIO_PORTA,
-        .GPIO_Pin = GPIO_PIN1,
-        .LED_Connection = LED_CONNECTION_FORWARD,
-        .LED_State = LED_STATE_OFF
-    },
-    [TRAFFIC_YELLOW_LED] =
-    {
-        .GPIO_Port = GPIO_PORTA,
-        .GPIO_Pin = GPIO_PIN2,
-        .LED_Connection = LED_CONNECTION_FORWARD,
-        .LED_State = LED_STATE_OFF
-    }
-};
 
 /******************************************************************************/
 
