@@ -1,7 +1,7 @@
 /**
  *@brief Defines the system clock frequency in hertz (HZ).
  */
-#define     SYS_CLK               42000000
+#define     SYS_CLK               16000000
 
 /**
  * @brief Scheduler tick interval (milliseconds)
@@ -11,7 +11,7 @@
 /**
  * @brief Maximum number of tasks supported by the scheduler
  */
-#define      MAX_RUNNABLES       3
+#define      MAX_RUNNABLES       2
 
 /**
  * @brief Highest priority level (Priority 0)

@@ -1,23 +1,16 @@
 /******************************************************************************/
 /**
- * @file schedular_CFG.c
- * @brief Configuration file for the scheduler.
+ * @file CHAR_LCD_CFG.c
+ * @brief File for configuring LCD connections.
  *
  * @par Project Name
- *  stm32fxx services
+ * LCD project
  *
  * @par Code Language
  * C
  *
  * @par Description
- * This file likely contains configuration settings for the scheduler,
- * allowing you to customize its behavior without modifying the core code.
- * These settings include all runnable configurations:
- *   - Periodic tick interval 
- *   - runnable priorities
- *   - runnable callback
- *   - runnable delay
- *   - runnable name 
+ * This file contains the configuration settings for connecting the LCD to the microcontroller.
  *
  * @par Author
  * Mahmoud Abou-Hawis
@@ -25,53 +18,18 @@
  */
 /******************************************************************************/
 
-
 /******************************************************************************/
 /* INCLUDES */
 /******************************************************************************/
-#include "schedular.h"
-#include "schedular_CFG.h"
+#include "CHAR_LCD_priv.h"
+#include "stm32f4xx_gpio.h"
+#include "CHAR_LCD.h"
 /******************************************************************************/
 
 /******************************************************************************/
 /* PRIVATE DEFINES */
 /******************************************************************************/
 
-
-extern void CheckSwitchesStates(void);
-
-extern void App(void);
-
-extern void traffic_start(void);
-
-extern void LCD_Runnable(void);
-
-extern void runnable(void);
-/**
- * @brief Array to store all runnable tasks in the system.
- *
- * @par This constant array `AllRunnableInSystemList` of type `Schedular_runnable_t`
- * holds up to `MAX_RUNNABLES` (defined in schedular_CFG.h) runnables  
- * These runnables are managed by the scheduler and will be scheduled for execution 
- * based on their priority and periodicity.
- */
-const Schedular_runnable_t AllRunnablesSystemList[MAX_RUNNABLES] =
-{
-    [PRIORITY_0] =
-    {
-        .CallBack = LCD_Runnable,
-        .DelayMS = 1,
-        .periodicityMS = 1,
-        .name = "LCD task"
-    },
-    [PRIORITY_1] = 
-    {
-        .CallBack = runnable,
-        .DelayMS  = 0,
-        .periodicityMS = 4000,
-        .name = "DELETE Screen"
-    }
-};
 
 /******************************************************************************/
 
@@ -118,6 +76,64 @@ const Schedular_runnable_t AllRunnablesSystemList[MAX_RUNNABLES] =
 /* PUBLIC VARIABLE DEFINITIONS */
 /******************************************************************************/
 
+const LCD_CFG_t LCD_PINS[LCD_PIN_NUMS] = {
+    [D0] = 
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN0
+    },
+    [D1] =
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN1
+    },
+    [D2] =
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN2
+    },
+    [D3] = 
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN3
+    },
+    [D4] =
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN4
+    },
+    [D5] =
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN5
+    },
+    [D6] = 
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN6
+    },
+    [D7] =
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN7
+    },
+    [E] =
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN8
+    },
+    [RW] = 
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin = GPIO_PIN9
+    },
+    [RS] =
+    {
+        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Pin  = GPIO_PIN10
+    }
+};
+
 /******************************************************************************/
 
 /******************************************************************************/
@@ -131,7 +147,7 @@ const Schedular_runnable_t AllRunnablesSystemList[MAX_RUNNABLES] =
 /******************************************************************************/
 /******************************************************************************/
 
-/******************************************************************************/
+/****--**************************************************************************/
 /* PUBLIC FUNCTION DEFINITIONS */
 /******************************************************************************/
 

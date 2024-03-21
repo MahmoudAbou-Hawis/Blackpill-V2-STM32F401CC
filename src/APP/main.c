@@ -5,40 +5,36 @@
 #include "led.h"
 #include "switch.h"
 #include "schedular.h"
+#include "CHAR_LCD.h"
 
-uint32_t switchState = SWITCH_STATUS_NOT_PRESSED;
 
-void App(void)
+char arr[7] = "Mahmoud";
+
+char arr1[7] = "sofar#1";
+
+void callBack(void)
 {
-	SWITCH_enuGetStatus(ALARM_SWITCH,&switchState);
-	if(switchState == SWITCH_STATUS_PRESSED)
+	LCD_WriteStringAsyncZeroCopy(arr,7,NULL);
+}
+static uint32_t cnt = 0;
+void runnable(void)
+{
+	if(cnt == 12000)
 	{
-		LED_enuSetStatus(ALARM_LED,LED_STATE_ON);
+		LCD_WriteStringAsyncZeroCopy(arr1,7,NULL);
 	}
-	else
-	{
-		LED_enuSetStatus(ALARM_LED,LED_STATE_OFF);
+	else if(cnt == 8000){
+		LCD_SetCursorAsync(1,9,NULL);
 	}
+	cnt+= 4000;
 }
 
 int main(void)
 {
-	
-	RCC_enuSetPrescaler(BUS_AHB_PRE_DIV2);
-	RCC_stPLLconfig_t pllcfg;
-	pllcfg.PLLSource = CLK_HSI;
-	pllcfg.PLLM = 8;
-	pllcfg.PLLN = 252;
-	pllcfg.PLLP = 6;
-	RCC_enuConfigPLL(&pllcfg);
-	RCC_enuEnableClk(CLK_PLL);
-	RCC_enuSetSysClk(SYSCLK_PLL);
-	
-	RCC_enuEnablePeripheral(PERIPHERAL_GPIOA);
-	RCC_enuEnablePeripheral(PERIPHERAL_GPIOC);
 
-	LED_enuInit();	
-	SWITCH_enuInit();
+ 	RCC_enuEnablePeripheral(PERIPHERAL_GPIOA);
+
+	LCD_InitAsync(callBack);
 
 	schedular_init();
 	schedular_start();
