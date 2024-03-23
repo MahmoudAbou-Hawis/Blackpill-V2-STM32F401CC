@@ -20,6 +20,7 @@
         "stm32f4xx_rcc.h": "c",
         "schedular_cfg.h": "c",
         "lcd.h": "c",
-        "stm32f4xx_gpio.h": "c"
+        "stm32f4xx_gpio.h": "c",
+        "stm32f4xx_uart.h": "c"
     }
 }

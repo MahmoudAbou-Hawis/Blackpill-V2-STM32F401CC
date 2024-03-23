@@ -248,7 +248,7 @@ GPIO_enuErrorStatus GPIO_Init(gpioPin_t * gpioPin)
             CLR_PIN_AF_CFG(alternate_function,(gpioPin->GPIO_Pin % 8));
 
             alternate_function |= 
-                                (GET_MODE_CFG_VAL(gpioPin->GPIO_Mode) << (gpioPin->GPIO_Pin *4 ));
+                                (GET_MODE_CFG_VAL(gpioPin->GPIO_Mode) << ((gpioPin->GPIO_Pin %8) *4 ));
             
             gpio->AFR[(gpioPin->GPIO_Pin/8)] = alternate_function;
             
