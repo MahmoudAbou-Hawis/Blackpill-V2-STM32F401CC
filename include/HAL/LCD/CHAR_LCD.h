@@ -82,6 +82,16 @@ extern "C"
  */
 #define  CMD_SHIFT_ENTIRE_DISPLAY_RIGHT           ((uint8_t)0x1C)
 
+/**
+ * @brief LCD command for Enable cursor and blinking.
+ */
+#define  CMD_CURSOR_BLINKING                       ((uint8_t)0x0B)
+
+/**
+ * @brief LCD command for Disable cursor and blinking.
+ */
+#define  CMD_CURSOR_NOT_BLINKING                    ((uint8_t)0x08)
+
 /******************************************************************************/
 
 /******************************************************************************/

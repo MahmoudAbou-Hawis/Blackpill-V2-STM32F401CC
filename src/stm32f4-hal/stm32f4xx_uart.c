@@ -135,15 +135,16 @@ typedef struct
 
 typedef struct
 {
-  bool isProcessRequest;
+  bool isTXProcessRequest;
+  bool isRXProcessRequest;
   char * pUartTransmitBuffer;
   uint16_t TransmitBufferSize;
   uint16_t TransmitPos;
-  Uart_CallBack CallBack;
+  Uart_CallBack TXCallBack;
+  Uart_CallBack RXCallBack;
   char * pUartReceiverBuffer;
   uint16_t ReceiverBufferSize;
   uint16_t ReceivePos;
-
 } UartInstanceProperties;
 /******************************************************************************/
 
@@ -212,7 +213,9 @@ UART_ErrorStatus_t UART_Init(const UART_Handle_t *const uartHandle)
            IS_VALID_WORD_LENGTH(uartHandle->UartConfiguration.WordLength) &&
            IS_VALID_PARITY(uartHandle->UartConfiguration.Parity) && 
            IS_NOT_UART_IN_PROCESS(
-                    UartInstancePro[(uint32_t)uartHandle->pUartInstance &0x0000000F].isProcessRequest))
+                    UartInstancePro[(uint32_t)uartHandle->pUartInstance &0x0000000F].isTXProcessRequest) &&
+           IS_NOT_UART_IN_PROCESS(
+                    UartInstancePro[(uint32_t)uartHandle->pUartInstance &0x0000000F].isRXProcessRequest))
   {
     UartInstance->CR1 = 0;
     UartInstance->CR2 = 0;
@@ -317,18 +320,17 @@ UART_ErrorStatus_t UART_TransmitAsyncZeroCopy(UART_Handle_t *uartHandle,
   {
     RET_enuErrorStatus = UART_NULL_PTR_PASSED;
   }
-  else if(IS_UART_INSTANCE_BUSY(UartInstancePro[UART_PropertiesIdx].isProcessRequest))
+  else if(IS_UART_INSTANCE_BUSY(UartInstancePro[UART_PropertiesIdx].isTXProcessRequest))
   {
     RET_enuErrorStatus = UART_ERROR;
   }
   else if(IS_VALID_USART_INSTANCE(uartHandle->pUartInstance))
   {
-    UartInstancePro[UART_PropertiesIdx].isProcessRequest    = true;
+    UartInstancePro[UART_PropertiesIdx].isTXProcessRequest  = true;
     UartInstancePro[UART_PropertiesIdx].pUartTransmitBuffer = pData;
     UartInstancePro[UART_PropertiesIdx].TransmitBufferSize = Size;
     UartInstancePro[UART_PropertiesIdx].TransmitPos         = 1;
-    UartInstancePro[UART_PropertiesIdx].ReceivePos         = -1;
-    UartInstancePro[UART_PropertiesIdx].CallBack = CB;
+    UartInstancePro[UART_PropertiesIdx].TXCallBack = CB;
     UartInstance->CR1 |= UART_CR1_TXEIE;
     UartInstance->CR1 |= UART_CR1_UE;
     UartInstance->DR = pData[0];
@@ -352,17 +354,17 @@ UART_ErrorStatus_t UART_TransmitAsyncZeroCopy(UART_Handle_t *uartHandle,
   {
     RET_enuErrorStatus = UART_NULL_PTR_PASSED;
   }
-  else if(IS_UART_INSTANCE_BUSY(UartInstancePro[UART_PropertiesIdx].isProcessRequest))
+  else if(IS_UART_INSTANCE_BUSY(UartInstancePro[UART_PropertiesIdx].isRXProcessRequest))
   {
     RET_enuErrorStatus = UART_ERROR;
   }
   else if(IS_VALID_USART_INSTANCE(uartHandle->pUartInstance))
   {
-    UartInstancePro[UART_PropertiesIdx].isProcessRequest    = true;
+    UartInstancePro[UART_PropertiesIdx].isRXProcessRequest   = true;
     UartInstancePro[UART_PropertiesIdx].pUartReceiverBuffer = pData;
     UartInstancePro[UART_PropertiesIdx].ReceiverBufferSize = Size;
     UartInstancePro[UART_PropertiesIdx].ReceivePos         = 0;
-    UartInstancePro[UART_PropertiesIdx].CallBack = CB;
+    UartInstancePro[UART_PropertiesIdx].RXCallBack = CB;
     UartInstance->CR1 |= UART_CR1_RXNEIE;
     UartInstance->CR1 |= UART_CR1_UE;
   }
@@ -375,6 +377,28 @@ UART_ErrorStatus_t UART_TransmitAsyncZeroCopy(UART_Handle_t *uartHandle,
 
 void USART1_IRQHandler(void)
 {
+  if(((USART_t*)USART1)->SR & UART_SR_RXNE)
+  {
+    UartInstancePro[0].pUartReceiverBuffer[UartInstancePro[0].ReceivePos++] = ((USART_t*)USART1)->DR;
+    if(UartInstancePro[0].ReceivePos == UartInstancePro[0].ReceiverBufferSize)
+    {
+      UartInstancePro[0].isRXProcessRequest = false;
+      ((USART_t*)USART1)->CR1 &= ~UART_CR1_RXNEIE;
+      if(UartInstancePro[0].isTXProcessRequest != true)
+      {
+        ((USART_t*)USART1)->CR1 &= ~UART_CR1_UE;
+      }
+      if(IS_NULL_PTR(UartInstancePro[0].RXCallBack))
+      {
+
+      }
+      else
+      {
+        UartInstancePro[0].RXCallBack();
+      }
+    }
+  }
+
   if(((USART_t*)USART1)->SR & UART_SR_TXE_Msk)
   {
     if(UartInstancePro[0].TransmitPos < UartInstancePro[0].TransmitBufferSize)
@@ -383,34 +407,22 @@ void USART1_IRQHandler(void)
     }
     else
     {
-      UartInstancePro[0].isProcessRequest = false;
-      ((USART_t*)USART1)->CR1 &= ~UART_CR1_TXEIE;
-      ((USART_t*)USART1)->CR1 &= ~UART_CR1_UE;
-      if(IS_NULL_PTR(UartInstancePro[0].CallBack))
+      if(UartInstancePro[0].isTXProcessRequest == true)
       {
+        UartInstancePro[0].isTXProcessRequest = false;
+        ((USART_t*)USART1)->CR1 &= ~UART_CR1_TXEIE;
+        if(UartInstancePro[0].isRXProcessRequest != true)
+        {
+         ((USART_t*)USART1)->CR1 &= ~UART_CR1_UE;
+        }
+        if(IS_NULL_PTR(UartInstancePro[0].TXCallBack))
+        {
 
-      }
-      else
-      {
-        UartInstancePro[0].CallBack();
-      }
-    }
-  }
-  if(((USART_t*)USART1)->SR & UART_SR_RXNE)
-  {
-    UartInstancePro[0].pUartReceiverBuffer[UartInstancePro[0].ReceivePos++] = ((USART_t*)USART1)->DR;
-    if(UartInstancePro[0].ReceivePos == UartInstancePro[0].ReceiverBufferSize)
-    {
-      UartInstancePro[0].isProcessRequest = false;
-      ((USART_t*)USART1)->CR1 &= ~UART_CR1_RXNEIE;
-      ((USART_t*)USART1)->CR1 &= ~UART_CR1_UE;
-      if(IS_NULL_PTR(UartInstancePro[0].CallBack))
-      {
-
-      }
-      else
-      {
-        UartInstancePro[0].CallBack();
+        }
+        else
+        {
+          UartInstancePro[0].TXCallBack();
+        }
       }
     }
   }

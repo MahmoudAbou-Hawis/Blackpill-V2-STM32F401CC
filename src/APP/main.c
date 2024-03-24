@@ -11,35 +11,22 @@
 #include "CHAR_LCD.h"
 
 char arr[8] = "Mahmoud";
+
+char arr2[7] = "";
+
 UART_Handle_t uart_handle;
 
-void callBack(void)
-{
-	LCD_WriteStringAsyncZeroCopy(arr,7,NULL);
-}
-static uint32_t cnt = 0;
-void runnable(void)
-{
-	if(cnt == 12000)
-	{
-		LCD_WriteStringAsyncZeroCopy(arr,7,NULL);
-	}
-	else if(cnt == 8000){
-		LCD_SetCursorAsync(1,9,NULL);
-	}
-	cnt+= 4000;
-}
 
 void CALLBACK(void)
 {
-	UART_TransmitTimeOut(&uart_handle,arr,1,-1);
+	UART_TransmitTimeOut(&uart_handle,arr2,7,-1);
 }
 int main(void)
 {
 
  	RCC_enuEnablePeripheral(PERIPHERAL_GPIOA);
 	RCC_enuEnablePeripheral(PERIPHERAL_USART1);
-	NVIC_EnableIRQ(37);
+	NVIC_EnableIRQ(USART1_IRQn);
 	gpioPin_t TX;
 	gpioPin_t RX;
 
@@ -59,7 +46,7 @@ int main(void)
 	GPIO_Init(&RX);
 
 
-	uart_handle.pUartInstance 					= USART1;
+	uart_handle.pUartInstance 				= USART1;
 	uart_handle.UartConfiguration.BaudRate 	= 9600;
 	uart_handle.UartConfiguration.Mode 		= UART_MODE_TX_RX;
 	uart_handle.UartConfiguration.Parity 		= UART_PARITY_NONE;
@@ -69,9 +56,10 @@ int main(void)
 
 	UART_Init(&uart_handle);
 	
-
-	UART_ReceiveAsyncZeroCopy(&uart_handle,arr,1,CALLBACK);
-
+	UART_TransmitAsyncZeroCopy(&uart_handle,arr,7,NULL);
+	UART_TransmitAsyncZeroCopy(&uart_handle,arr,7,NULL);
+	UART_ReceiveAsyncZeroCopy(&uart_handle,arr2,7,CALLBACK);
+	UART_ReceiveAsyncZeroCopy(&uart_handle,arr2,7,CALLBACK);
 	///UART_TransmitAsyncZeroCopy(&uart_handle,arr,7,NULL);
 	while(1)
 	{

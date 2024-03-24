@@ -129,7 +129,7 @@ typedef enum
     DMA1_Stream5_IRQn,           /*!< DMA1 Stream 5 global Interrupt                                    */
     DMA1_Stream6_IRQn,           /*!< DMA1 Stream 6 global Interrupt                                    */
     ADC_IRQn,                    /*!< ADC1, ADC2 and ADC3 global Interrupts                             */
-    EXTI9_5_IRQn,                /*!< External Line[9:5] Interrupts                                     */
+    EXTI9_5_IRQn = 23,           /*!< External Line[9:5] Interrupts                                     */
     TIM1_BRK_TIM9_IRQn,          /*!< TIM1 Break interrupt and TIM9 global interrupt                    */
     TIM1_UP_TIM10_IRQn,          /*!< TIM1 Update Interrupt and TIM10 global interrupt                  */
     TIM1_TRG_COM_TIM11_IRQn,     /*!< TIM1 Trigger and Commutation Interrupt and TIM11 global interrupt */
@@ -145,27 +145,27 @@ typedef enum
     SPI2_IRQn,                   /*!< SPI2 global Interrupt                                             */
     USART1_IRQn,                 /*!< USART1 global Interrupt                                           */
     USART2_IRQn,                 /*!< USART2 global Interrupt                                           */
-    EXTI15_10_IRQn,              /*!< External Line[15:10] Interrupts                                   */
+    EXTI15_10_IRQn = 40,         /*!< External Line[15:10] Interrupts                                   */
     RTC_Alarm_IRQn,              /*!< RTC Alarm (A and B) through EXTI Line Interrupt                   */
     OTG_FS_WKUP_IRQn,            /*!< USB OTG FS Wakeup through EXTI line interrupt                     */
-    DMA1_Stream7_IRQn,           /*!< DMA1 Stream7 Interrupt                                            */
-    SDIO_IRQn,                   /*!< SDIO global Interrupt                                             */
+    DMA1_Stream7_IRQn = 47,      /*!< DMA1 Stream7 Interrupt                                            */
+    SDIO_IRQn = 49,              /*!< SDIO global Interrupt                                             */
     TIM5_IRQn,                   /*!< TIM5 global Interrupt                                             */
     SPI3_IRQn,                   /*!< SPI3 global Interrupt                                             */
-    DMA2_Stream0_IRQn,           /*!< DMA2 Stream 0 global Interrupt                                    */
+    DMA2_Stream0_IRQn = 56,      /*!< DMA2 Stream 0 global Interrupt                                    */
     DMA2_Stream1_IRQn,           /*!< DMA2 Stream 1 global Interrupt                                    */
     DMA2_Stream2_IRQn,           /*!< DMA2 Stream 2 global Interrupt                                    */
     DMA2_Stream3_IRQn,           /*!< DMA2 Stream 3 global Interrupt                                    */
     DMA2_Stream4_IRQn,           /*!< DMA2 Stream 4 global Interrupt                                    */
-    OTG_FS_IRQn,                 /*!< USB OTG FS global Interrupt                                       */
+    OTG_FS_IRQn = 67,                 /*!< USB OTG FS global Interrupt                                       */
     DMA2_Stream5_IRQn,           /*!< DMA2 Stream 5 global interrupt                                    */
     DMA2_Stream6_IRQn,           /*!< DMA2 Stream 6 global interrupt                                    */
     DMA2_Stream7_IRQn,           /*!< DMA2 Stream 7 global interrupt                                    */
     USART6_IRQn,                 /*!< USART6 global interrupt                                           */
     I2C3_EV_IRQn,                /*!< I2C3 event interrupt                                              */
     I2C3_ER_IRQn,                /*!< I2C3 error interrupt                                              */
-    FPU_IRQn,                    /*!< FPU global interrupt                                              */
-    SPI4_IRQn                    /*!< SPI4 global Interrupt                                             */
+    FPU_IRQn = 81,               /*!< FPU global interrupt                                              */
+    SPI4_IRQn = 84                  /*!< SPI4 global Interrupt                                             */
 } IRQn_Type;
 
 /**
