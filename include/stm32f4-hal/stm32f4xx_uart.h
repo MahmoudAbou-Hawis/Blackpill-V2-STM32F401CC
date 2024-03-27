@@ -295,6 +295,32 @@ extern UART_ErrorStatus_t UART_ReceiveAsyncZeroCopy(UART_Handle_t *uartHandle,
                                                     char *pData, uint16_t Size, 
                                                     Uart_CallBack CB);
 
+
+
+/** @brief Transmits data using UART with DMA (Direct Memory Access).
+*
+*This function transmits data through the UART peripheral using Direct Memory Access (DMA). 
+*It returns the status of the transmission, indicating success or an error.
+*
+* @param[in] uartHandle Pointer to a UART_Handle_t structure identifying the UART instance.
+*
+* @param[in] CB Callback function that will be invoked upon transmission completion.
+*
+*/
+extern void UART_TransmitWithDMA(UART_Handle_t *uartHandle,Uart_CallBack CB);
+
+
+/** @brief Receives data using UART with DMA (Direct Memory Access).
+*
+*This function receives data through the UART peripheral using Direct Memory Access (DMA). 
+*It returns the status of the reception, indicating success or an error.
+*
+* @param[in] uartHandle Pointer to a UART_Handle_t structure identifying the UART instance.
+*
+*/
+extern void UART_ReceiveWithDMA(UART_Handle_t *uartHandle);
+
+
 /******************************************************************************/
 
 /******************************************************************************/

@@ -66,6 +66,16 @@
 #define UART_CR1_UE_Msk (0x1UL << UART_CR1_UE_Pos)
 #define UART_CR1_UE UART_CR1_UE_Msk
 
+
+#define UART_CR3_DMAR_Pos  (6U)
+#define UART_CR3_DMAR_Msk  (0x1U << UART_CR3_DMAR_Pos)
+#define UART_CR3_DMAR      UART_CR3_DMAR_Msk
+
+
+#define UART_CR3_DMAT_Pos  (7U)
+#define UART_CR3_DMAT_Msk  (0x1U << UART_CR3_DMAT_Pos)
+#define UART_CR3_DMAT      UART_CR3_DMAT_Msk
+
 #define NUMBER_OF_UART 3
 /******************************************************************************/
 
@@ -142,6 +152,7 @@ typedef struct
   uint16_t TransmitPos;
   Uart_CallBack TXCallBack;
   Uart_CallBack RXCallBack;
+  Uart_CallBack TCCallBack;
   char * pUartReceiverBuffer;
   uint16_t ReceiverBufferSize;
   uint16_t ReceivePos;
@@ -373,6 +384,22 @@ UART_ErrorStatus_t UART_TransmitAsyncZeroCopy(UART_Handle_t *uartHandle,
     RET_enuErrorStatus = UART_ERROR;
   }
   return RET_enuErrorStatus;
+}
+
+void UART_ReceiveWithDMA(UART_Handle_t *uartHandle)
+{
+  USART_t *UartInstance = ((USART_t *)((uint32_t)uartHandle->pUartInstance &0xFFFFFFF0));
+  UartInstance->CR3    |= UART_CR3_DMAR;
+  UartInstance->CR1    |= UART_CR1_UE;
+}
+
+void UART_TransmitWithDMA(UART_Handle_t *uartHandle,Uart_CallBack CB)
+{
+  USART_t *UartInstance = ((USART_t *)((uint32_t)uartHandle->pUartInstance &0xFFFFFFF0));
+  uint8_t UART_PropertiesIdx = (uint32_t)uartHandle->pUartInstance &0x0000000F;
+  UartInstance->CR3    |= UART_CR3_DMAT;
+  UartInstance->CR1    |= UART_CR1_UE;
+  UartInstancePro[UART_PropertiesIdx].TCCallBack = CB;
 }
 
 void USART1_IRQHandler(void)

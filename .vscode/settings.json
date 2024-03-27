@@ -21,6 +21,7 @@
         "schedular_cfg.h": "c",
         "lcd.h": "c",
         "stm32f4xx_gpio.h": "c",
-        "stm32f4xx_uart.h": "c"
+        "stm32f4xx_uart.h": "c",
+        "stm32f4xx_hal_dma.h": "c"
     }
 }

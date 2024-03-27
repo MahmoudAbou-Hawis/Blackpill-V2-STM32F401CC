@@ -9,20 +9,67 @@
 #include "switch.h"
 #include "schedular.h"
 #include "CHAR_LCD.h"
+#include "stm32f4xx_dma.h"
 
 char arr[8] = "Mahmoud";
 
-char arr2[7] = "";
+char arr2[6] = "sofar";
+
+char arr3[3] ="";
+
 
 UART_Handle_t uart_handle;
 
 
 void CALLBACK(void)
 {
-	UART_TransmitTimeOut(&uart_handle,arr2,7,-1);
+	UART_TransmitTimeOut(&uart_handle,arr3,7,-1);
 }
 int main(void)
 {
+	RCC_enuEnablePeripheral(PERIPHERAL_DMA2);   
+	NVIC_EnableIRQ(DMA2_Stream7_IRQn);
+	NVIC_EnableIRQ(DMA2_Stream5_IRQn);
+
+	DMA_Handle_t handle;
+	handle.Instance					 	= DMA2;
+	handle.Stream   					=  DMA_STREAM_7;
+	handle.Initialization.Channel   	= DMA_CHANNEL_4;
+	handle.Initialization.Direction 	= DMA_MEMORY_TO_PERIPH;
+	handle.Initialization.FIFOMode  	= DMA_FIFOMODE_DISABLE;
+	//handle.Initialization.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+	handle.Initialization.MemAlignment  = DMA_MDATAALIGN_BYTE;
+	handle.Initialization.MemBurst		= DMA_MBURST_SINGLE;
+	handle.Initialization.MemInc		= DMA_MEMORY_INCREMENT_ENABLED;
+	handle.Initialization.Mode			= DMA_NORMAL;
+	handle.Initialization.Priority      = DMA_PRIORITY_VERY_HIGH;
+	handle.Initialization.PerAlignment	= DMA_PDATAALIGN_BYTE;
+	handle.Initialization.PeriphInc		= DMA_PERIPHERAL_INCREMENT_DISABLED;
+	handle.Initialization.PeriphBurst	= DMA_PBURST_SINGLE;
+	handle.CompleteTransferCallBack = NULL;
+	handle.HalfTransferCallBack = NULL;
+	handle.ErrorTransferCallBack = NULL;
+
+		DMA_Handle_t handle2;
+	handle2.Instance					 	= DMA2;
+	handle2.Stream   					=  DMA_STREAM_5;
+	handle2.Initialization.Channel   	= DMA_CHANNEL_4;
+	handle2.Initialization.Direction 	= DMA_PERIPH_TO_MEMORY;
+	handle2.Initialization.FIFOMode  	= DMA_FIFOMODE_DISABLE;
+	//handle.Initialization.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+	handle2.Initialization.MemAlignment  = DMA_MDATAALIGN_BYTE;
+	handle2.Initialization.MemBurst		= DMA_MBURST_SINGLE;
+	handle2.Initialization.MemInc		= DMA_MEMORY_INCREMENT_ENABLED;
+	handle2.Initialization.Mode			= DMA_NORMAL;
+	handle2.Initialization.Priority      = DMA_PRIORITY_VERY_HIGH;
+	handle2.Initialization.PerAlignment	= DMA_PDATAALIGN_BYTE;
+	handle2.Initialization.PeriphInc		= DMA_PERIPHERAL_INCREMENT_DISABLED;
+	handle2.Initialization.PeriphBurst	= DMA_PBURST_SINGLE;
+	handle2.CompleteTransferCallBack = NULL;
+	handle2.HalfTransferCallBack = NULL;
+	handle2.ErrorTransferCallBack = NULL;
+	DMA_Init(&handle,-1);
+	DMA_Init(&handle2,-1);
 
  	RCC_enuEnablePeripheral(PERIPHERAL_GPIOA);
 	RCC_enuEnablePeripheral(PERIPHERAL_USART1);
@@ -55,12 +102,16 @@ int main(void)
 	uart_handle.UartConfiguration.OverSampling = UART_OVERSAMPLING_8; 
 
 	UART_Init(&uart_handle);
-	
-	UART_TransmitAsyncZeroCopy(&uart_handle,arr,7,NULL);
-	UART_TransmitAsyncZeroCopy(&uart_handle,arr,7,NULL);
-	UART_ReceiveAsyncZeroCopy(&uart_handle,arr2,7,CALLBACK);
-	UART_ReceiveAsyncZeroCopy(&uart_handle,arr2,7,CALLBACK);
-	///UART_TransmitAsyncZeroCopy(&uart_handle,arr,7,NULL);
+	UART_TransmitWithDMA(&uart_handle,CALLBACK);
+	UART_ReceiveWithDMA(&uart_handle);
+	void * uart = USART1 + 0x4;
+	DMA_StartInterrupt(&handle,arr,uart,7);
+	for(int i = 0 ; i < 5000000 ; i++);
+
+	DMA_StartInterrupt(&handle,arr2,uart,6);
+
+	DMA_StartInterrupt(&handle2,uart,arr3,2);
+
 	while(1)
 	{
 	}
