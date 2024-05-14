@@ -71,7 +71,10 @@ extern "C"
  */
 typedef enum
 {
-    ALARM_SWITCH,
+    UP_SWITCH,
+    DOWN_SWITCH,
+    RIGHT_SWITCH,
+    LEFT_SWITCH,
     _SWITCHES_NUM
 } Switches_t;
 

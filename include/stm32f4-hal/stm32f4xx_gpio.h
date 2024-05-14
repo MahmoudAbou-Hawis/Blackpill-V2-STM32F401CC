@@ -377,6 +377,7 @@ extern "C"
  */
 typedef enum
 {
+    GPIO_SUCCESS = 0,
     NULL_PTR_PASSED,
     NOT_VALID_PIN,
     NOT_VALID_MODE,
@@ -384,7 +385,6 @@ typedef enum
     NOT_VALID_SPEED,
     NOT_VALID_STATUS,
     NOT_VALID_AT_TYPE,
-    SUCCESS
 } GPIO_enuErrorStatus;
 
 

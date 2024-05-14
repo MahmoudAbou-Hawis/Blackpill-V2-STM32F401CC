@@ -3,6 +3,7 @@
         "AIRCR",
         "CALIB",
         "CLKSRC",
+        "CSWITCH",
         "GPIO",
         "NVIC",
         "PORTA",
@@ -22,6 +23,8 @@
         "lcd.h": "c",
         "stm32f4xx_gpio.h": "c",
         "stm32f4xx_uart.h": "c",
-        "stm32f4xx_hal_dma.h": "c"
+        "stm32f4xx_hal_dma.h": "c",
+        "stm32f4xx_hal_uart.h": "c",
+        "stm32f4xx_spi.h": "c"
     }
 }

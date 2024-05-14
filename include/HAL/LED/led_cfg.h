@@ -72,11 +72,12 @@ extern "C"
  */
 typedef enum
 {
+  RED_LED,
+  YELLOW_LED,
+  _LEDs_NUM,
   TRAFFIC_RED_LED,
   TRAFFIC_YELLOW_LED,
-  TRAFFIC_GREEN_LED ,
-  ALARM_LED,
-  _LEDs_NUM
+  TRAFFIC_GREEN_LED
 } LEDs_t;
 
 /******************************************************************************/

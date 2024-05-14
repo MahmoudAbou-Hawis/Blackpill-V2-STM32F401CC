@@ -203,7 +203,7 @@ typedef struct {
 
 GPIO_enuErrorStatus GPIO_Init(gpioPin_t * gpioPin)
 {
-    GPIO_enuErrorStatus RET_enuErrorStatus = SUCCESS;
+    GPIO_enuErrorStatus RET_enuErrorStatus = GPIO_SUCCESS;
     
     /* Check the given pin configuration */
     if(!IS_GPIO_INSTANCE(gpioPin->GPIO_Port))
@@ -321,7 +321,7 @@ GPIO_enuErrorStatus GPIO_Init(gpioPin_t * gpioPin)
 GPIO_enuErrorStatus GPIO_SetPinValue(void *GPIO_Port, uint8_t GPIO_Pin, uint32_t GPIO_State)
 {
     /* Initialize return status to success */
-    GPIO_enuErrorStatus RET_enuErrorStatus = SUCCESS;
+    GPIO_enuErrorStatus RET_enuErrorStatus = GPIO_SUCCESS;
 
     /* Validate input arguments */
     if (!IS_GPIO_INSTANCE(GPIO_Port))
@@ -347,7 +347,7 @@ GPIO_enuErrorStatus GPIO_SetPinValue(void *GPIO_Port, uint8_t GPIO_Pin, uint32_t
 
 GPIO_enuErrorStatus GPIO_GetPinValue(void *GPIO_Port, uint8_t GPIO_Pin, uint32_t *value)
 {
-    GPIO_enuErrorStatus RET_enuErrorStatus = SUCCESS;
+    GPIO_enuErrorStatus RET_enuErrorStatus = GPIO_SUCCESS;
 
     /* Validate input arguments */
     if (!IS_GPIO_INSTANCE(GPIO_Port))

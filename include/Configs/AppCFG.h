@@ -44,12 +44,12 @@ extern "C"
 /* PUBLIC DEFINES */
 /******************************************************************************/
 
-#define CFG_APP_MAIN                 0
-#define CFG_APP_TEST_RCC             1
+#define CFG_APP_MASTER                 0
+#define CFG_APP_SLAVE                  1
 
 
 
-#define CURRENT_APP                  CFG_APP_MAIN  
+#define CURRENT_APP                  CFG_APP_SLAVE  
 
 /******************************************************************************/
 

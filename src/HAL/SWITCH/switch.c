@@ -163,7 +163,7 @@ SWITCH_errorStatus SWITCH_enuInit(void) {
         SwitchesStatus[switchIdx].previous = 0;
 
        /* Initialize the GPIO pin */
-       if (GPIO_Init(&pinCfg) != SUCCESS) {
+       if (GPIO_Init(&pinCfg) != GPIO_SUCCESS) {
            RET_enuErrorStatus = SWITCH_CONFIGURATION_FAILED;
            Wrong_Configuration = true;
        }

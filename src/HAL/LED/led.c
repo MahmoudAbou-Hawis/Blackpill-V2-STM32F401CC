@@ -146,7 +146,7 @@ LED_errorStatus LED_enuInit(void) {
        pinCfg.GPIO_AT_Type = GPIO_AT_None;
 
        /* Initialize the GPIO pin */
-       if (GPIO_Init(&pinCfg) != SUCCESS) {
+       if (GPIO_Init(&pinCfg) != GPIO_SUCCESS) {
            RET_enuErrorStatus = LED_INITIALIZATION_FAILED;
            Wrong_Configuration = true;
        }

@@ -80,34 +80,19 @@
  */
 const LED_CFG_t LEDs[_LEDs_NUM] =
 {
-    [TRAFFIC_RED_LED] = 
+    [RED_LED] = 
     {
         .GPIO_Port = GPIO_PORTA,
         .GPIO_Pin = GPIO_PIN0,
         .LED_Connection = LED_CONNECTION_FORWARD,
         .LED_State = LED_STATE_OFF
-    }
-    ,
-    [TRAFFIC_GREEN_LED] =
+    },
+    [YELLOW_LED] = 
     {
         .GPIO_Port = GPIO_PORTA,
-        .GPIO_Pin = GPIO_PIN1,
+        .GPIO_Pin  = GPIO_PIN1,
         .LED_Connection = LED_CONNECTION_FORWARD,
-        .LED_State = LED_STATE_OFF
-    },
-    [TRAFFIC_YELLOW_LED] =
-    {
-        .GPIO_Port = GPIO_PORTA,
-        .GPIO_Pin = GPIO_PIN2,
-        .LED_Connection = LED_CONNECTION_FORWARD,
-        .LED_State = LED_STATE_OFF
-    },
-    [ALARM_LED] = 
-    {
-        .GPIO_Port = GPIO_PORTC,
-        .GPIO_Pin = GPIO_PIN14,
-        .LED_Connection = LED_CONNECTION_FORWARD,
-        .LED_State = LED_STATE_OFF
+        .LED_State = LED_STATE_ON
     }
 };
 

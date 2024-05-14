@@ -567,31 +567,31 @@ void DMA2_Stream7_IRQHandler(void)
 
 void DMA2_Stream5_IRQHandler(void)
 {
-DMA_t * instance = ((DMA_t*)DMA2);
+    DMA_t * instance = ((DMA_t*)DMA2);
     if((instance->HISR & DMA_HISR_TCIF5 )== DMA_HISR_TCIF5)
     {
+        instance->HIFCR |= DMA_HIFCR_CTCIF5;
         if(HandlesDMA2[STREAM_5]->CompleteTransferCallBack != NULL)
         {
             HandlesDMA2[STREAM_5]->CompleteTransferCallBack();
         }
-        instance->HIFCR |= DMA_HIFCR_CTCIF5;
     }
     if((instance->HISR & DMA_HISR_HTIF5) == DMA_HISR_HTIF5)
     {
+        instance->HIFCR |= DMA_HIFCR_CHTIF5; 
         if(HandlesDMA2[STREAM_5]->HalfTransferCallBack != NULL)
         {
             HandlesDMA2[STREAM_5]->HalfTransferCallBack();
         }
-        instance->HIFCR |= DMA_HIFCR_CHTIF5; 
     }
     if((instance->HISR & DMA_HISR_TEIF5) == DMA_HISR_TEIF5)
     {
+        instance->HIFCR |= DMA_HIFCR_CTEIF5;
         if(HandlesDMA2[STREAM_5]->ErrorTransferCallBack != NULL)
         {
             HandlesDMA2[STREAM_5]->ErrorTransferCallBack();
         }
-        instance->HIFCR |= DMA_HIFCR_CTEIF5;
     }
-    instance->HIFCR |= 0x0F400000;
+    instance->HIFCR |= 0x00000F40;
 }
 /******************************************************************************/

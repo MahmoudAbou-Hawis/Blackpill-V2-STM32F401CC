@@ -1,130 +1,146 @@
-/******************************************************************************/
+/*******************************************************************************/
 /**
- * @file switch_cfg.c
- * @brief Switch Configuration Implementation
- *
+ * @file ControlProtocol.h
+ * @brief Header file for the control protocol.
+ * 
  * @par Project Name
- * Embedded switch Configuration for STM32F401CC
+ * Control Protocol 
  *
  * @par Code Language
  * C
  *
  * @par Description
- * This implementation file contains the array definition of switch configurations.
- * Each element of the array represents the configuration of a switch, including
- * GPIO port, pin number, and connection type (pull-up or pull-down).
- * 
+ * This header file defines the functions and data structures used for communication
+ * between the micro-controllers. It provides a hardware-
+ * independent interface for sending and receiving control messages.
+ *
  * @par Author
  * Mahmoud Abou-Hawis
  *
- ******************************************************************************/
+ *******************************************************************************/
+
+/******************************************************************************/
+/* MULTIPLE INCLUSION GUARD */
+/******************************************************************************/
+#ifndef CONTROL_PROTOCOL_H_
+#define CONTROL_PROTOCOL_H_
+/******************************************************************************/
+
+/******************************************************************************/
+/* C++ Style GUARD */
+/******************************************************************************/
+#ifdef __cplusplus
+extern "C"
+{
+#endif /* __cplusplus */
+/******************************************************************************/
 
 /******************************************************************************/
 /* INCLUDES */
 /******************************************************************************/
-#include "switch.h"
-#include "stm32f4xx_gpio.h"
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
 /******************************************************************************/
 
 /******************************************************************************/
-/* PRIVATE DEFINES */
+/* PUBLIC DEFINES */
 /******************************************************************************/
 
+#define NUMBER_OF_DATA                  (8U)
 
 /******************************************************************************/
 
 /******************************************************************************/
-
-/******************************************************************************/
-/* PRIVATE MACROS */
-/******************************************************************************/
-
-
-/******************************************************************************/
-/* PRIVATE ENUMS */
+/* PUBLIC MACROS */
 /******************************************************************************/
 
 /******************************************************************************/
 
 /******************************************************************************/
-/* PRIVATE TYPES */
+/* PUBLIC ENUMS */
 /******************************************************************************/
 
-
-/******************************************************************************/
-
-/******************************************************************************/
-/* PRIVATE CONSTANT DEFINITIONS */
-/******************************************************************************/
-
-/**
- * @brief Switch Configuration Array
- *
- * This array contains configurations for all switches defined in the system.
- * Each element represents the configuration of a specific switch, including
- * the GPIO port, pin number, and connection type (pull-up or pull-down).
- */
-const SWITCH_CFG_t switches[_SWITCHES_NUM] =
+typedef enum
 {
-    [UP_SWITCH] =
-    {
-        .GPIO_Pin = GPIO_PIN0,
-        .GPIO_Port = GPIO_PORTA,
-        .SWITCH_Connection = SWITCH_CONNECTION_PULLUP
-    },
-    [DOWN_SWITCH] =
-    {
-        .GPIO_Pin = GPIO_PIN1,
-        .GPIO_Port = GPIO_PORTA,
-        .SWITCH_Connection = SWITCH_CONNECTION_PULLUP
-    },
-    [RIGHT_SWITCH] =
-    {
-        .GPIO_Pin = GPIO_PIN2,
-        .GPIO_Port = GPIO_PORTA,
-        .SWITCH_Connection = SWITCH_CONNECTION_PULLUP
-    },
-    [LEFT_SWITCH] =
-    {
-        .GPIO_Pin = GPIO_PIN3,
-        .GPIO_Port = GPIO_PORTA,
-        .SWITCH_Connection = SWITCH_CONNECTION_PULLUP 
-    }
-};
+    PROTOCOL_OK,
+    PROTOCOL_ERROR
+} PROTOCOL_ErrorStatus_t;
+
+
+/* Enum defining the type of message */
+typedef enum
+{
+    COMMAND,    /**< Command message */
+    DATA        /**< Data message */
+} MsgType_t;
+
 
 /******************************************************************************/
 
 /******************************************************************************/
-/* PRIVATE VARIABLE DEFINITIONS */
+/* PUBLIC TYPES */
 /******************************************************************************/
+
+/* Callback function type */
+typedef void (*Protocol_CallBack)(void);
+
+/* Struct defining a  message */
+typedef struct 
+{
+    MsgType_t MessageType;          /**< Type of the message (Command or Data) */
+    char  pMessage[NUMBER_OF_DATA]; /**< Pointer to the message data */
+    uint16_t len;                   /**< Length of the message data */
+    Protocol_CallBack CallBack;     /**< Callback function for message handling */
+} Message_t;
 
 /******************************************************************************/
 
 /******************************************************************************/
-/* PUBLIC CONSTANT DEFINITIONS */
-/******************************************************************************/
-
-/******************************************************************************/
-
-/******************************************************************************/
-/* PUBLIC VARIABLE DEFINITIONS */
+/* PUBLIC CONSTANT DECLARATIONS */
 /******************************************************************************/
 
 /******************************************************************************/
 
 /******************************************************************************/
-/* PRIVATE FUNCTION PROTOTYPES */
+/* PUBLIC VARIABLE DECLARATIONS */
 /******************************************************************************/
+
 
 /******************************************************************************/
 
 /******************************************************************************/
-/* PRIVATE FUNCTION DEFINITIONS */
+/* PUBLIC FUNCTION PROTOTYPES */
 /******************************************************************************/
+
+/** @brief Initializes the control protocol
+ *  @return Error Status
+ */
+PROTOCOL_ErrorStatus_t Protocol_Init(void);
+
+/** @brief Sends a message asynchronously 
+ *  @param[in] msg Pointer to the message to be sent
+ *  @return Error Status
+ */
+PROTOCOL_ErrorStatus_t Protocol_SendAsync(Message_t * msg);
+
+/** @brief Receives a message asynchronously 
+ *  @param[in out] Frame Pointer to store the received message
+ *  @return Error Status
+ */
+PROTOCOL_ErrorStatus_t Protocol_ReceiveAsync(Message_t* msg);
 /******************************************************************************/
 
 /******************************************************************************/
-/* PUBLIC FUNCTION DEFINITIONS */
+/* C++ Style GUARD */
+/******************************************************************************/
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 /******************************************************************************/
 
+/******************************************************************************/
+/* MULTIPLE INCLUSION GUARD */
+/******************************************************************************/
+#endif /* CONTROL_PROTOCOL_H_ */
 /******************************************************************************/
