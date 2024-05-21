@@ -229,6 +229,32 @@ extern SysTick_ErrorStatus_t SysTick_Start(void);
  * @return SYSTICK_OK on success, SYSTICK_NOT_OK on error (e.g., invalid callback format).
  */
 extern SysTick_ErrorStatus_t SysTick_SetCallback(SysTickCB_t pCallBackFunction);
+
+
+
+/**
+ * @brief Delays the execution for a specified number of microseconds using the SysTick timer.
+ *
+ * This function uses the SysTick timer to create a delay for the specified time in microseconds.
+ * It is useful for creating precise timing delays in embedded systems where SysTick is available.
+ *
+ * @param Time The delay duration in microseconds. This value must be a positive integer.
+ *
+ * @return SysTick_ErrorStatus_t
+ *         Returns the status of the delay operation. 
+ *
+ * Example usage:
+ * @code
+ * SysTick_ErrorStatus_t status;
+ * status = SysTick_DelayMicroSeconds(1000);  // Delay for 1000 microseconds (1 millisecond)
+ * if (status == SYSTICK_OK) {
+ *     // Delay successful, proceed with next operation
+ * } else {
+ *     // Handle error
+ * }
+ * @endcode
+ */
+extern SysTick_ErrorStatus_t SysTick_DelayMicroSeconds(uint32_t Time);
 /******************************************************************************/
 
 /******************************************************************************/

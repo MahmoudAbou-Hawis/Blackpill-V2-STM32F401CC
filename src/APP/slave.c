@@ -44,21 +44,21 @@ int main(void)
 
 	MISO.GPIO_Pin = GPIO_PIN6;
 	MISO.GPIO_Mode = GPIO_MODE_AF5;
-	MISO.GPIO_Speed = GPIO_SPEED_VERY_HIGH;
+	MISO.GPIO_Speed = GPIO_SPEED_HIGH;
 	MISO.GPIO_Port  = GPIO_PORTA;
 	MISO.GPIO_AT_Type = GPIO_AT_PushPull;
 
 
 	MOSI.GPIO_Pin = GPIO_PIN7;
 	MOSI.GPIO_Mode = GPIO_MODE_AF5;
-	MOSI.GPIO_Speed = GPIO_SPEED_VERY_HIGH;
+	MOSI.GPIO_Speed = GPIO_SPEED_HIGH;
 	MOSI.GPIO_Port  = GPIO_PORTA;
 	MOSI.GPIO_AT_Type = GPIO_AT_PullDown;
 
 	
 	CLK.GPIO_Pin = GPIO_PIN5;
 	CLK.GPIO_Mode = GPIO_MODE_AF5;
-	CLK.GPIO_Speed = GPIO_SPEED_VERY_HIGH;
+	CLK.GPIO_Speed = GPIO_SPEED_HIGH;
 	CLK.GPIO_Port  = GPIO_PORTA;
 	CLK.GPIO_AT_Type = GPIO_AT_PullDown;
 
@@ -87,10 +87,12 @@ int main(void)
 
 	SPI_Init(&SPI);
 	//GPIO_SetPinValue(GPIO_PORTA,GPIO_PIN0,GPIO_STATE_RESET);
-	uint8_t  data[6] = "";
+	uint8_t  data[6] = "Mahmou";
 	while(1)
 	{
-		
+		SPI_Transmit(&SPI,&data,5,-1);
+		volatile int x = 15;
+		/*
 		volatile int x = SPI_Receive(&SPI,data,5,-1);
 		if(data[0] == 'M' && data[1] == 'a' && data[2] == 'h' && data[3] == 'm' && data[4] == 'o')
 		{
@@ -100,8 +102,8 @@ int main(void)
 		{
 			volatile int g = 50; 
 		}
+		*/
 	}
-	while(1);
     return 0;
 }
 #endif

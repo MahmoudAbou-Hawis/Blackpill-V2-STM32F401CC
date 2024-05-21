@@ -49,7 +49,7 @@ extern "C"
 
 
 
-#define CURRENT_APP                  CFG_APP_SLAVE  
+#define CURRENT_APP                  CFG_APP_MASTER  
 
 /******************************************************************************/
 

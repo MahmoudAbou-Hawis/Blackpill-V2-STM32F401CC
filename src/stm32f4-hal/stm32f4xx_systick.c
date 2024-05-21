@@ -335,6 +335,25 @@ SysTick_ErrorStatus_t SysTick_SetCallback(SysTickCB_t pCallBackFunction)
     return RET_ErrorStatus;
 }
 
+SysTick_ErrorStatus_t SysTick_DelayMicroSeconds(uint32_t Time)
+{
+    SYSTICK->VAL   = 0UL;   
+    SYSTICK->CTRL |=  (SysTick_CTRL_ENABLE_Msk);
+    uint32_t cnt = 0;  
+    uint32_t last = 0;
+    uint32_t current = 0;
+    while(cnt < Time)
+    {
+        current = SYSTICK->VAL;
+        if(current - last >= 8)
+        {
+            cnt++;
+            last = current;
+        }
+    }
+    return SYSTICK_OK;
+}
+
 void SysTick_Handler(void)
 {
     if(!IS_NULL_PARAM(CallBack))

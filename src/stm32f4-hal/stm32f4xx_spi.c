@@ -328,7 +328,7 @@ SPI_ErrorStatus SPI_Init(SPI_Handle_t *hspi)
        {
             SPI_t * Instance = ((SPI_t*)hspi->Instance);
             Instance->CR1 = (hspi->Init.Mode | hspi->Init.CRCCalculation | hspi->Init.DataSize |
-                            (hspi->Init.NSS & SPI_CR1_SSM ) | hspi->Init.CLKPhase       | hspi->Init.CLKPhase |
+                            (hspi->Init.NSS & SPI_CR1_SSM ) | hspi->Init.CLKPolarity       | hspi->Init.CLKPhase |
                              hspi->Init.ByteOrder | hspi->Init.BaudRatePrescaler);
             Instance->CR2   = ((hspi->Init.NSS == SPI_NSS_HW_OUTPUT)?SPI_NSS_HW_OUTPUT : SPI_CR1_RESET);
             Instance->CRCPR = ((hspi->Init.CRCCalculation == SPI_CRCCALCULATION_ENABLE)?hspi->Init.CRCPolynomial:SPI_CRCPR_RESET);
@@ -391,7 +391,7 @@ SPI_ErrorStatus SPI_Receive(SPI_Handle_t *hspi, uint8_t *pData, uint16_t Size, u
         {
           while( GET_FLAG_STATE(Instance->SR,SPI_SR_TXE)  != TX_BUFFER_EMPTY);
           /**Send Dummy Data */
-          Instance->DR = 0xFF;
+          Instance->DR = pData[data];
         }
         while(GET_FLAG_STATE(Instance->SR,SPI_SR_RXNE) != RX_BUFFER_NOT_EMPTY);
 
