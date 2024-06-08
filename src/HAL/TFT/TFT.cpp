@@ -6,8 +6,7 @@ extern "C"
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_spi.h"
 #include "stm32f4xx_systick.h"
-#include "TFT_CFG.h"
-#include "TFT_Fonts.h"
+#include "TFT_Fonts.hpp"
 }
 
 #include "TFT.hpp"
@@ -27,67 +26,42 @@ using namespace display;
 TFT_ErrorStatus TFT::Send(uint8_t frame, RequestType requestType)
 {
     TFT_ErrorStatus RET_Error = TFT_ErrorStatus::TFT_OK;
-    if (this->controlPin == nullptr || this->SendingFrame == nullptr)
+    switch (requestType)
     {
-        RET_Error = TFT_ErrorStatus::TFT_ERROR;
+    case RequestType::DATA:
+        TFT_SelectPin(TFT::A0_Idx, PIN_HIGH);
+        break;
+    case RequestType::COMMAND:
+        TFT_SelectPin(TFT::A0_Idx, PIN_LOW);
+        break;
+    default:
+        break;
     }
-    else
-    {
-        switch (requestType)
-        {
-        case RequestType::DATA:
-            this->controlPin(TFT::A0_Idx, PIN_HIGH);
-            break;
-        case RequestType::COMMAND:
-            this->controlPin(TFT::A0_Idx, PIN_LOW);
-            break;
-        default:
-            break;
-        }
-        this->SendingFrame(frame);
-    }
+    TFT_SendSPI(frame);
     return RET_Error;
 }
 
 void TFT::TFT_Initialization()
 {
-    if (this->controlPin == nullptr || this->SendingFrame == nullptr || this->DelayFunction == nullptr)
-    {
-        return;
-    }
-    else
-    {
-        this->controlPin(TFT::RST_Idx, PIN_HIGH);
-        this->DelayFunction(100);
-        this->controlPin(TFT::RST_Idx, PIN_LOW);
-        this->DelayFunction(3);
-        this->controlPin(TFT::RST_Idx, PIN_HIGH);
-        this->DelayFunction(100);
-        this->controlPin(TFT::RST_Idx, PIN_LOW);
-        this->DelayFunction(100);
-        this->controlPin(TFT::RST_Idx, PIN_HIGH);
-        this->DelayFunction(120000);
-        TFT::Send(DISPLAY_OUT, RequestType::COMMAND);
-        this->DelayFunction(150000);
-        TFT::Send(PIXEL_FORMAT, RequestType::COMMAND);
-        TFT::Send(COLOR_R5G6B5, RequestType::DATA);
-        TFT::Send(DISPLAY_ON, RequestType::COMMAND);
-    }
+    TFT_SelectPin(TFT::RST_Idx, PIN_HIGH);
+    TFT_WaitMicroSeconds(100);
+    TFT_SelectPin(TFT::RST_Idx, PIN_LOW);
+    TFT_WaitMicroSeconds(3);
+    TFT_SelectPin(TFT::RST_Idx, PIN_HIGH);
+    TFT_WaitMicroSeconds(100);
+    TFT_SelectPin(TFT::RST_Idx, PIN_LOW);
+    TFT_WaitMicroSeconds(100);
+    TFT_SelectPin(TFT::RST_Idx, PIN_HIGH);
+    TFT_WaitMicroSeconds(120000);
+    TFT::Send(DISPLAY_OUT, RequestType::COMMAND);
+    TFT_WaitMicroSeconds(150000);
+    TFT::Send(PIXEL_FORMAT, RequestType::COMMAND);
+    TFT::Send(COLOR_R5G6B5, RequestType::DATA);
+    TFT::Send(DISPLAY_ON, RequestType::COMMAND);
 }
 
-TFT::TFT(uint32_t _width, uint32_t _height,
-         std::function<void(uint32_t)> DelayFunc,
-         std::function<void(uint32_t, uint8_t)> PinControlFun,
-         std::function<void(uint8_t)> SPI_Func, uint8_t _RST_Idx, uint8_t _A0_Idx)
+TFT::TFT()
 {
-
-    this->A0_Idx = _A0_Idx;
-    this->RST_Idx = _RST_Idx;
-    this->hight = _height;
-    this->width = _width;
-    this->controlPin = PinControlFun;
-    this->DelayFunction = DelayFunc;
-    this->SendingFrame = SPI_Func;
     TFT::TFT_Initialization();
 }
 
@@ -240,7 +214,7 @@ void TFT::drawPixel(display::point * point, display::Colors color)
     TFT::Send((color & 0x00FF), RequestType::DATA);
 }
 
-TFT_ErrorStatus TFT::DrawLine(point *start, point *end, Colors color )
+void TFT::DrawLine(point *start, point *end, Colors color)
 {
     int16_t x0 = start->x;
     int16_t y0 = start->y;
@@ -273,8 +247,8 @@ TFT_ErrorStatus TFT::DrawLine(point *start, point *end, Colors color )
 }
 
 
-TFT_ErrorStatus TFT::DrawCircle(point *center, uint8_t radius, Colors color ) {
-       int x = radius;
+void TFT::DrawCircle(point *center, uint8_t radius, Colors color ) {
+    int x = radius;
     int y = 0;
     int err = 0;
 
@@ -309,4 +283,48 @@ TFT_ErrorStatus TFT::DrawCircle(point *center, uint8_t radius, Colors color ) {
             err -= 2*x + 1;
         }
     }
+}
+
+
+TFT_ErrorStatus TFT::DrawRectOrSquare(point *upperPoint, point *lowerPoint, Colors color )
+{
+    TFT_ErrorStatus RET_Error = TFT_ErrorStatus::TFT_OK;
+    if(upperPoint == nullptr || lowerPoint == nullptr)
+    {
+        RET_Error = TFT_ErrorStatus::TFT_ERROR;
+    }
+    else
+    {
+        display::point b = {upperPoint->x, lowerPoint->y};
+        display::point c = {lowerPoint->x, upperPoint->y};
+        DrawLine(upperPoint,&b,color);
+        DrawLine(upperPoint,&c,color);
+        DrawLine(&b,lowerPoint,color);
+        DrawLine(&c,lowerPoint,color);
+    }
+    return RET_Error;
+}
+
+TFT_ErrorStatus TFT::Button(point * pos, const char *str, Colors TextColor, Colors bgColor)
+{
+    TFT_ErrorStatus RET_Error = TFT_ErrorStatus::TFT_OK;
+    if(pos == nullptr || strlen(str) > 5)
+    {
+        RET_Error = TFT_ErrorStatus::TFT_ERROR;
+    }
+    else
+    {
+        for(int i = 0 ; i < 30 ; i++)
+        {
+            display::point end = {pos->x-90 , pos->y};
+            DrawLine(pos,&end,bgColor);
+            pos->y--;
+        }
+        pos->y += 20;
+        pos->x -= 10;
+        WriteText(str,display::Fonts::Font_7X10,TextColor,bgColor,pos);
+        pos->y += 10;
+        pos->x += 10;
+    }
+    return RET_Error;
 }

@@ -31,8 +31,8 @@
  *
  * @date 2024-05-19
  *
- * @copyright MIT License
- *
+ * @copyright GNU General Public License v3.0
+ * 
  * @author
  * Mahmoud Abou-Hawis
  *
@@ -50,7 +50,9 @@
 /******************************************************************************/
 #include <stdint.h>
 #include <stdlib.h>
-#include <functional>
+#include <string.h>
+#include <TFT_Conf.hpp>
+#include <TFT_Port.hpp>
 /******************************************************************************/
 
 /** @defgroup TFT_display
@@ -129,39 +131,13 @@ enum Colors : uint16_t
    *
    * @ingroup TFT_display
    */
-  class TFT
+  class TFT : public TFT_COM
   {
   private:
-    uint32_t hight;    /**< Height of the TFT display. */
-    uint32_t width;    /**< Width of the TFT display. */
-    uint32_t A0_Idx;   /**<A0 TFT pin identifier send to controlPin */
-    uint32_t RST_Idx;  /**<RST TFT pin identifier send to controlPin */
-    uint32_t Window_X; /** Current Window X axis */
-    uint32_t Window_Y; /** Current Window Y axis */
-
-    /**
-     * @brief Function to introduce a delay in microseconds.
-     *
-     * This function takes a single `uint32_t` parameter, which represents the delay duration in microseconds.
-     */
-    std::function<void(uint32_t)> DelayFunction;
-
-    /**
-     * @brief Function to (SPI) to send a frame of data to the display.
-     *
-     * This function takes a single `uint8_t` parameter, which represents the frame of data to be sent.
-     */
-    std::function<void(uint8_t)> SendingFrame;
-
-    /**
-     * @brief Function to control a pin.
-     *
-     * This function takes two parameters:
-     * - `uint32_t`: Represents the pin number.
-     * - `uint8_t`: Represents the value to set on the pin (e.g., high or low).
-     */
-    std::function<void(uint32_t, uint8_t)> controlPin;
-
+    uint32_t hight   = TFT_HIGHT;    /**< Height of the TFT display. */
+    uint32_t width   = TFT_WIDTH;    /**< Width of the TFT display. */
+    uint32_t A0_Idx  = A0_PIN_IDX;   /**<A0 TFT pin identifier send to controlPin */
+    uint32_t RST_Idx = RST_PIN_IDX;  /**<RST TFT pin identifier send to controlPin */
     /**
      * @brief Send a frame via SPI.
      *
@@ -231,12 +207,9 @@ void WriteChar(uint8_t ch, const uint16_t *font, uint32_t font_w, uint32_t font_
  *
  * @return None.
 */
-
-
-
-
+    void drawPixel(display::point * point, display::Colors color);
   public:
-  void drawPixel(display::point * point, display::Colors color);
+
     /**
      * @brief Explicit constructor for initializing a TFT display.
      *
@@ -252,10 +225,7 @@ void WriteChar(uint8_t ch, const uint16_t *font, uint32_t font_w, uint32_t font_
      * @param[in] _RST_Idx The index or identifier of the RST (reset) pin of the TFT display.
      * @param[in] _A0_Idx The index or identifier of the A0 (command/data) pin of the TFT display.
      */
-    explicit TFT(uint32_t _width, uint32_t _height,
-                 std::function<void(uint32_t)> DelayFunc,
-                 std::function<void(uint32_t, uint8_t)> PinControlFun,
-                 std::function<void(uint8_t)> SPI_Func, uint8_t _RST_Idx, uint8_t _A0_Idx);
+    explicit TFT();
 
     /**
      * @brief Copy constructor.
@@ -285,7 +255,7 @@ void WriteChar(uint8_t ch, const uint16_t *font, uint32_t font_w, uint32_t font_
      * @param[in] color The color of the line (default: BLACK).
      * @return The status of the draw operation.
      */
-    TFT_ErrorStatus DrawLine(point *start, point *end, Colors color = Colors::BLACK);
+    void DrawLine(point *start, point *end, Colors color = Colors::BLACK);
 
     /**
      * @brief Draw a circle on the TFT display.
@@ -297,7 +267,7 @@ void WriteChar(uint8_t ch, const uint16_t *font, uint32_t font_w, uint32_t font_
      * @param[in] color The color of the circle (default: BLACK).
      * @return The status of the draw operation.
      */
-    TFT_ErrorStatus DrawCircle(point *center, uint8_t radius, Colors color = Colors::BLACK) ;
+    void DrawCircle(point *center, uint8_t radius, Colors color = Colors::BLACK) ;
 
     /**
      * @brief Draw a square on the TFT display.
@@ -309,7 +279,7 @@ void WriteChar(uint8_t ch, const uint16_t *font, uint32_t font_w, uint32_t font_
      * @param[in] color The color of the square (default: BLACK).
      * @return The status of the draw operation.
      */
-    TFT_ErrorStatus DrawSquare(point *upperPoint, point *lowerPoint, Colors color = Colors::BLACK) const;
+    TFT_ErrorStatus DrawRectOrSquare(point *upperPoint, point *lowerPoint, Colors color = Colors::BLACK);
 
     /**
      * @brief Draw text on the TFT display.
@@ -334,6 +304,21 @@ void WriteChar(uint8_t ch, const uint16_t *font, uint32_t font_w, uint32_t font_
      * @return The status of the draw operation.
      */
     TFT_ErrorStatus DrawImage(const uint16_t *Image, point *start, uint32_t image_width, uint32_t image_hight);
+
+
+    /**
+   * @brief Create a button on the TFT display.
+   *
+   * This function creates a button on the TFT display at the specified position
+   * with the given text and colors.
+   *
+   * @param[in] pos Pointer to the position of the button (top-left corner).
+   * @param[in] str The text to be displayed on the button.
+   * @param[in] TextColor The color of the text (default is BLACK).
+   * @param[in] bgColor The background color of the button (default is WHITE).
+   * @return The status of the button creation operation.
+   */
+    TFT_ErrorStatus Button(point *pos,const char *str,Colors TextColor = Colors::BLACK, Colors bgColor = Colors::WHITE);
 
     /** @brief Deleted destructor.
      *
