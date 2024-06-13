@@ -101,15 +101,62 @@ namespace display
    */
 enum Colors : uint16_t
 {
-    BLACK = 0x0000,  /**< Represents the color black. */
-    RED = 0xF800,    /**< Represents the color red. */
-    BLUE = 0x001F,   /**< Represents the color blue. */
-    GREEN = 0x07E0,  /**< Represents the color green. */
-    WHITE = 0xFFFF,  /**< Represents the color white. */
-    YELLOW = 0xFFE0, /**< Represents the color yellow. */
-    PINK = 0xF81F,   /**< Represents the color pink. */
-    BROWN = 0xA145,  /**< Represents the color brown. */
-    GRAY = 0x8410    /**< Represents the color gray (or grey). */
+    BLACK = 0x0000,       /**< Represents the color black. */
+    RED = 0xF800,         /**< Represents the color red. */
+    BLUE = 0x001F,        /**< Represents the color blue. */
+    GREEN = 0x07E0,       /**< Represents the color green. */
+    WHITE = 0xFFFF,       /**< Represents the color white. */
+    YELLOW = 0xFFE0,      /**< Represents the color yellow. */
+    PINK = 0xF81F,        /**< Represents the color pink. */
+    BROWN = 0xA145,       /**< Represents the color brown. */
+    GRAY = 0x8410,        /**< Represents the color gray (or grey). */
+    ORANGE = 0xFD20,      /**< Represents the color orange. */
+    PURPLE = 0x780F,      /**< Represents the color purple. */
+    CYAN = 0x07FF,        /**< Represents the color cyan. */
+    MAGENTA = 0xF81F,     /**< Represents the color magenta. */
+    LIGHT_GRAY = 0xC618,  /**< Represents the color light gray. */
+    DARK_GRAY = 0x7BEF,   /**< Represents the color dark gray. */
+    LIGHT_BLUE = 0x7D7C,  /**< Represents the color light blue. */
+    DARK_BLUE = 0x000D,   /**< Represents the color dark blue. */
+    LIGHT_GREEN = 0x97F6, /**< Represents the color light green. */
+    DARK_GREEN = 0x03E0,  /**< Represents the color dark green. */
+    LIGHT_RED = 0xFC10,   /**< Represents the color light red. */
+    DARK_RED = 0x8000,    /**< Represents the color dark red. */
+    SKY_BLUE = 0x867D,    /**< Represents the color sky blue. */
+    INDIGO = 0x4810,      /**< Represents the color indigo. */
+    VIOLET = 0x801F,      /**< Represents the color violet. */
+    TURQUOISE = 0x471A,   /**< Represents the color turquoise. */
+    GOLD = 0xFEA0,        /**< Represents the color gold. */
+    SILVER = 0xC618,      /**< Represents the color silver. */
+    LAVENDER = 0xE73F,    /**< Represents the color lavender. */
+    CORAL = 0xFBEA,       /**< Represents the color coral. */
+    SALMON = 0xFC0E,      /**< Represents the color salmon. */
+    CHOCOLATE = 0xD343,   /**< Represents the color chocolate. */
+    TOMATO = 0xFB08,      /**< Represents the color tomato. */
+    GOLDENROD = 0xDD24,   /**< Represents the color goldenrod. */
+    FIREBRICK = 0xB104,   /**< Represents the color firebrick. */
+    PLUM = 0xDD1B,        /**< Represents the color plum. */
+    ORCHID = 0xDB9A,      /**< Represents the color orchid. */
+    TAN = 0xD5B1,         /**< Represents the color tan. */
+    NAVY = 0x0010,        /**< Represents the color navy. */
+    AQUA = 0x07FF,        /**< Represents the color aqua. */
+    TEAL = 0x0410,        /**< Represents the color teal. */
+    MINT = 0x9DF3,        /**< Represents the color mint. */
+    LIME = 0x07E0,        /**< Represents the color lime. */
+    SPRING_GREEN = 0x07EF,/**< Represents the color spring green. */
+    OLIVE = 0x7BE0,       /**< Represents the color olive. */
+    MAROON = 0x7800,      /**< Represents the color maroon. */
+    FUCHSIA = 0xF81F,     /**< Represents the color fuchsia. */
+    PERIWINKLE = 0xC618,  /**< Represents the color periwinkle. */
+    CHARTREUSE = 0x7FE0,  /**< Represents the color chartreuse. */
+    SEASHELL = 0xFFF5,    /**< Represents the color seashell. */
+    IVORY = 0xFFFE,       /**< Represents the color ivory. */
+    BEIGE = 0xF7BB,       /**< Represents the color beige. */
+    PEACH = 0xFED6,       /**< Represents the color peach. */
+    SIENNA = 0xA285,      /**< Represents the color sienna. */
+    KHAKI = 0xF731,       /**< Represents the color khaki. */
+    PALE_GREEN = 0x9FD3,  /**< Represents the color pale green. */
+    MIDNIGHT_BLUE = 0x18CE /**< Represents the color midnight blue. */
 };
 
 
@@ -138,6 +185,17 @@ enum Colors : uint16_t
     uint32_t width   = TFT_WIDTH;    /**< Width of the TFT display. */
     uint32_t A0_Idx  = A0_PIN_IDX;   /**<A0 TFT pin identifier send to controlPin */
     uint32_t RST_Idx = RST_PIN_IDX;  /**<RST TFT pin identifier send to controlPin */
+    int currentIdx = -1;                        /**< Refer to the current shown List */
+    int NumberOfEmptyLists = NUMBER_OF_LISTS;   /**< Refer to the empty Lists which u can create*/
+
+    struct List
+    {
+        char **List = nullptr;
+        uint8_t len = 0;
+        uint8_t idx = -1; 
+    };
+    List Lists[NUMBER_OF_LISTS];
+
     /**
      * @brief Send a frame via SPI.
      *
@@ -208,6 +266,15 @@ void WriteChar(uint8_t ch, const uint16_t *font, uint32_t font_w, uint32_t font_
  * @return None.
 */
     void drawPixel(display::point * point, display::Colors color);
+
+
+
+    void printList(int idx);
+
+    void mark(int idx);
+
+    void unmarked(int idx);
+  
   public:
 
     /**
@@ -319,6 +386,54 @@ void WriteChar(uint8_t ch, const uint16_t *font, uint32_t font_w, uint32_t font_
    * @return The status of the button creation operation.
    */
     TFT_ErrorStatus Button(point *pos,const char *str,Colors TextColor = Colors::BLACK, Colors bgColor = Colors::WHITE);
+
+    /**
+     * @brief Lists items from the provided array of strings.
+     *
+     * This function takes a list of strings and their length. 
+     *
+     * @param List An array of pointers to strings. Each pointer points to a C-style string.
+     * @param len The number of items in the list.
+     * 
+     * @return The List id ,  -1 mean failed.
+     */
+    int OptionList(char ** List, uint8_t len);
+
+
+
+    /**
+     * @brief Displays an option list on the TFT display.
+     *
+     * This function displays a list of options on the TFT display based on the provided ID. 
+     * 
+     *
+     * @param Id An identifier for the option list to be displayed. This ID determines which 
+     *           option list is shown on the display.
+     * 
+     * @return TFT_ErrorStatus Returns an error status indicating the success or failure 
+     *         of the operation. 
+     */
+    TFT_ErrorStatus ShowOptionList(uint8_t Id);
+
+
+    /**
+     * @brief Moves the iterator to the next element in the list.
+     *
+     * @return None
+     */
+    void next();
+
+
+    /**
+     * @brief Moves the iterator to the previous element in the list.
+     *
+     * @return None.
+     */
+    void previous();
+
+
+    int getCurrenListElement();
+
 
     /** @brief Deleted destructor.
      *

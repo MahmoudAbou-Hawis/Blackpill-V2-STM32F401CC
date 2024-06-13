@@ -19,11 +19,6 @@
 #define      PRIORITY_0          0 
 
 /**
- * @brief attached to the runnable which it's priority is 1.
+ * @brief Highest priority level (Priority 0)
  */
-#define      PRIORITY_1          1 
-
-/**
- * @brief attached to the runnable which it's priority is 2.
- */
-#define      PRIORITY_2          2
+#define      PRIORITY_1          1

@@ -69,26 +69,14 @@ const SWITCH_CFG_t switches[_SWITCHES_NUM] =
     [UP_SWITCH] =
     {
         .GPIO_Pin = GPIO_PIN0,
-        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Port = GPIO_PORTB,
         .SWITCH_Connection = SWITCH_CONNECTION_PULLUP
     },
     [DOWN_SWITCH] =
     {
         .GPIO_Pin = GPIO_PIN1,
-        .GPIO_Port = GPIO_PORTA,
+        .GPIO_Port = GPIO_PORTB,
         .SWITCH_Connection = SWITCH_CONNECTION_PULLUP
-    },
-    [RIGHT_SWITCH] =
-    {
-        .GPIO_Pin = GPIO_PIN2,
-        .GPIO_Port = GPIO_PORTA,
-        .SWITCH_Connection = SWITCH_CONNECTION_PULLUP
-    },
-    [LEFT_SWITCH] =
-    {
-        .GPIO_Pin = GPIO_PIN3,
-        .GPIO_Port = GPIO_PORTA,
-        .SWITCH_Connection = SWITCH_CONNECTION_PULLUP 
     }
 };
 

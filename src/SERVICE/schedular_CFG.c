@@ -40,15 +40,7 @@
 
 extern void CheckSwitchesStates(void);
 
-extern void app(void);
 
-extern void traffic_start(void);
-
-extern void LCD_Runnable(void);
-
-extern void runnable(void);
-
-extern void CheckDoublePressed(void);
 
 /**
  * @brief Array to store all runnable tasks in the system.
@@ -66,13 +58,6 @@ const Schedular_runnable_t AllRunnablesSystemList[MAX_RUNNABLES] =
         .DelayMS = 0,
         .periodicityMS = 5,
         .name = "LCD task"
-    },
-    [PRIORITY_1] =
-    {
-        .CallBack = app,
-        .DelayMS = 100,
-        .periodicityMS = 100,
-        .name = "Check Double"
     }
 };
 

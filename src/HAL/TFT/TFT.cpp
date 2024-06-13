@@ -328,3 +328,145 @@ TFT_ErrorStatus TFT::Button(point * pos, const char *str, Colors TextColor, Colo
     }
     return RET_Error;
 }
+
+#if NUMBER_OF_LISTS 
+
+
+int TFT::OptionList(char ** List, uint8_t len)
+{
+    int RET = -1;
+    if(List != nullptr && len > 0 && NumberOfEmptyLists != 0)
+    {
+        Lists[--NumberOfEmptyLists].idx  = 0;
+        Lists[NumberOfEmptyLists].len    = len;
+        Lists[NumberOfEmptyLists].List   = List;
+        RET = NumberOfEmptyLists;
+    }   
+    else
+    {
+        /** No thing */
+    }
+    return RET;
+}
+
+void TFT::printList(int idx)
+{
+    int i = 0;
+    display::point x = {128,140};
+    display::point start = {128,160};
+    display::point end = {1,start.y};
+    while (start.y > 0)
+    {
+        DrawLine(&start,&end,display::WHITE);
+        start.y--;
+        end = {0,start.y};
+    }
+    for(i = 0 ; i < 4 && (i+idx) < Lists[currentIdx].len ; i++)
+    {
+        WriteText(Lists[currentIdx].List[idx + i],display::Fonts::Font_7X10,display::BLACK,display::WHITE,&x);
+        x.y -= 40;
+    }
+    if(i < 4)
+    {
+        x.y +=20;
+        point end = {1,x.y};
+        while (x.y > 0)
+        {
+            DrawLine(&x,&end,display::WHITE);
+            x.y--;
+            end = {1,x.y};
+        }
+        
+    }
+}
+
+void TFT::mark(int idx)
+{
+    display::point start = {128,(160 - ((idx%4) * 40))};
+    display::point end   = {1,start.y}; 
+    for(int i = 0 ; i < 40 ; i++)
+    {
+        DrawLine(&start,&end,display::CHOCOLATE);
+        start.y--;
+        end.y = start.y;
+    }
+    start.y +=20;
+    WriteText(Lists[currentIdx].List[idx],display::Fonts::Font_7X10,display::BLACK,display::CHOCOLATE,&start);
+}
+
+void TFT::unmarked(int idx)
+{
+    display::point start = {128,(160 - ((idx%4) * 40))};
+    display::point end   = {1,start.y}; 
+    for(int i = 0 ; i < 40 ; i++)
+    {
+        DrawLine(&start,&end,display::WHITE);
+        start.y--;
+        end.y = start.y;
+    }
+    start.y +=20;
+    WriteText(Lists[currentIdx].List[idx],display::Fonts::Font_7X10,display::BLACK,display::WHITE,&start);
+}
+
+TFT_ErrorStatus TFT::ShowOptionList(uint8_t Id)
+{
+    TFT_ErrorStatus RET_ErrorStatus = TFT_ErrorStatus::TFT_OK;
+    if(Id >= NumberOfEmptyLists && Id < NUMBER_OF_LISTS)
+    {
+        currentIdx = Id;
+        printList(Lists[currentIdx].idx);
+        mark(Lists[currentIdx].idx);
+    }
+    else
+    {
+        RET_ErrorStatus = TFT_ErrorStatus::TFT_ERROR;
+    }
+    return RET_ErrorStatus;
+}
+
+
+
+void TFT::next()
+{
+    Lists[currentIdx].idx++;
+    Lists[currentIdx].idx %= Lists[currentIdx].len;
+    if((Lists[currentIdx].idx) %4 == 0)
+    {
+        printList(Lists[currentIdx].idx);
+        mark(Lists[currentIdx].idx);
+    }
+    else
+    {
+        unmarked(Lists[currentIdx].idx-1);
+        mark(Lists[currentIdx].idx);
+    }
+}
+
+
+void TFT::previous()
+{
+    Lists[currentIdx].idx--;
+    Lists[currentIdx].idx %= Lists[currentIdx].len;
+    if((Lists[currentIdx].idx) %4 == 3)
+    {
+        int n = ((Lists[currentIdx].idx /4)) * 4;
+        printList(n);
+        mark(Lists[currentIdx].idx);
+    }
+    else
+    {
+        unmarked(Lists[currentIdx].idx+1);
+        mark(Lists[currentIdx].idx);
+    }
+}
+
+
+int TFT::getCurrenListElement()
+{
+    return Lists[currentIdx].idx;
+}
+
+
+
+
+#endif
